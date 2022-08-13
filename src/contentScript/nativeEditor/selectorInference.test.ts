@@ -257,7 +257,6 @@ describe("safeCssSelector", () => {
   /* eslint-enable jest/expect-expect */
 });
 
-
 describe("safeMultiCssSelector", () => {
   /* eslint-disable jest/expect-expect -- Custom expectSelector */
   const expectSelector = (selectors: string, body: string) => {
@@ -391,8 +390,6 @@ describe("safeMultiCssSelector", () => {
   /* eslint-enable jest/expect-expect */
 });
 
-
-
 describe("sortBySelector", () => {
   test("selector length", () => {
     expect(sortBySelector(["#abc", "#a"])).toStrictEqual(["#a", "#abc"]);
@@ -489,20 +486,19 @@ describe("inferSelectors", () => {
   /* eslint-enable jest/expect-expect */
 });
 
-
 describe("inferMultiSelectors", () => {
   /* eslint-disable jest/expect-expect -- Custom expectSelectors */
   const expectSelectors = (selectors: string[], body: string) => {
     document.body.innerHTML = body;
 
     // The provided selector list should only match one element
-    const userSelectedElements = selectors.map((selectors) =>
-      document.body.querySelector<Element[]>(selectors) // Match multiple
+    const userSelectedElements = selectors.map(
+      (selectors) => document.body.querySelector<Element[]>(selectors) // Match multiple
     );
     expect(uniq(userSelectedElements)).toHaveLength(1);
 
     // The provided selector list should match the inferred list
-    const inferredSelectors = inferMultiSelectors(userSelectedElements[]);
+    const inferredSelectors = inferMultiSelectors(userSelectedElements);
     expect(inferredSelectors).toEqual(selectors);
   };
 
@@ -557,7 +553,6 @@ describe("inferMultiSelectors", () => {
 
   /* eslint-enable jest/expect-expect */
 });
-
 
 describe("inferSelectorsIncludingStableAncestors", () => {
   /* eslint-disable jest/expect-expect -- Custom expectSelectors */
