@@ -36,10 +36,18 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
   });
 
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>();
+  const [error, setError] = useState<string>();
 
   const imageRef = useRef<HTMLImageElement>();
   const onImageLoaded: React.ReactEventHandler<HTMLImageElement> = (event) => {
+    setError(undefined);
     imageRef.current = event.currentTarget;
+  };
+
+  const onImageLoadingError: React.ReactEventHandler<HTMLImageElement> = () => {
+    setError(
+      "Image loading error. Ensure the URL is correct and the image is accessible."
+    );
   };
 
   const onCropChange = (crop: Crop) => {
@@ -47,10 +55,6 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
   };
 
   const onCropComplete = (crop: Crop) => {
-    makeClientCrop(crop);
-  };
-
-  const makeClientCrop = (crop: Crop) => {
     if (imageRef && crop.width && crop.height) {
       const croppedImage = getCroppedImg(imageRef.current, crop);
       setCroppedImageUrl(croppedImage);
@@ -59,6 +63,8 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
   };
 
   const getCroppedImg = (image: HTMLImageElement, crop: Crop) => {
+    setError(undefined);
+
     const canvas = document.createElement("canvas");
     const pixelRatio = window.devicePixelRatio;
     const scaleX = image.naturalWidth / image.width;
@@ -83,7 +89,14 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
       crop.height * scaleY
     );
 
-    return canvas.toDataURL("image/png");
+    let croppedImageUrl: string | undefined;
+    try {
+      croppedImageUrl = canvas.toDataURL("image/jpeg");
+    } catch (error) {
+      setError(error.message ?? error);
+    }
+
+    return croppedImageUrl;
   };
 
   const source: string | null =
@@ -99,7 +112,13 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
             onComplete={onCropComplete}
             onChange={onCropChange}
           >
-            <img src={source} alt="Item being cropped" onLoad={onImageLoaded} />
+            <img
+              crossOrigin="anonymous"
+              src={source}
+              alt="Item being cropped"
+              onLoad={onImageLoaded}
+              onError={onImageLoadingError}
+            />
           </ReactCrop>
         </Stylesheets>
       )}
@@ -109,6 +128,7 @@ const ImageCropWidget: React.VFC<WidgetProps> = ({
           <img alt="Crop preview" className="mw-100" src={croppedImageUrl} />
         </>
       )}
+      {error && <div className="text-danger">{error}</div>}
     </FormGroup>
   );
 };
