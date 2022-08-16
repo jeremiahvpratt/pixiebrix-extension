@@ -1,19 +1,34 @@
+/*
+ * Copyright (C) 2022 PixieBrix, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React, { useContext, useEffect, useMemo } from "react";
 import { BlockOptionProps } from "@/components/fields/schemaFields/genericOptionsFactory";
 import { PageEditorTabContext } from "@/pageEditor/context";
 import { useField } from "formik";
 import ConnectedFieldTemplate from "@/components/form/ConnectedFieldTemplate";
 import SelectWidget from "@/components/form/widgets/SelectWidget";
-import { Framework, FrameworkMeta } from "@/messaging/constants";
+import {
+  Framework,
+  FrameworkMeta,
+  FrameworkOption,
+} from "@/messaging/constants";
 import { isNullOrBlank, joinName } from "@/utils";
 import { Schema } from "@/core";
 import SchemaField from "@/components/fields/schemaFields/SchemaField";
-
-type FrameworkOption = {
-  value: Framework;
-  label: string;
-  detected?: FrameworkMeta;
-};
 
 export const readerOptions: FrameworkOption[] = [
   { value: "react", label: "React" },

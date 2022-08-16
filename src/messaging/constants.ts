@@ -28,15 +28,21 @@ export const GET_COMPONENT_INFO = "@@pixiebrix/script/GET_COMPONENT_INFO";
 
 type UNKNOWN_VERSION = null;
 
-export const KNOWN_READERS = <const>[
+export const KNOWN_READERS = [
   "react",
   "emberjs",
   "angularjs",
   "vue",
   "jquery",
-];
+] as const;
 
 export type Framework = typeof KNOWN_READERS[number];
+
+export interface FrameworkOption {
+  value: Framework;
+  label: string;
+  detected?: FrameworkMeta;
+}
 
 export interface FrameworkMeta {
   id: Framework;
