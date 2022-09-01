@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import styles from "@/pageEditor/panes/Pane.module.scss";
-
 import {
   PanelDefinition,
   PanelExtensionPoint,
@@ -24,9 +22,8 @@ import {
 import { ExtensionPointConfig } from "@/extensionPoints/types";
 import React from "react";
 import useAvailableExtensionPoints from "@/pageEditor/hooks/useAvailableExtensionPoints";
-import Centered from "@/pageEditor/components/Centered";
 import BrickModal from "@/components/brickModalNoTags/BrickModal";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button, Modal } from "react-bootstrap";
 import config from "@/pageEditor/extensionPoints/panel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -51,50 +48,51 @@ const InsertPanelPane: React.FunctionComponent<{
   const { flagOn } = useFlags();
 
   return (
-    <Centered isScrollable>
-      <div className={styles.title}>Inserting Panel</div>
-
-      <div className="text-left">
-        <p>
-          <FontAwesomeIcon icon={faMousePointer} size="lg" /> Click on an
-          existing <code>div</code> or container-like element to insert a panel
-          in that container. You may also search the{" "}
-          <span className="text-info">Marketplace</span> for existing panels.
-        </p>
-
+    <Modal show onHide={cancel}>
+      <Modal.Header closeButton>Inserting Panel</Modal.Header>
+      <Modal.Body>
         <div>
-          <Alert variant="warning">
-            <FontAwesomeIcon icon={faExclamationTriangle} /> Automatic panel
-            placement is currently in <b>Alpha</b> and typically requires manual
-            configuration/adjustment
-          </Alert>
-        </div>
-      </div>
-      <div>
-        {flagOn("page-editor-extension-point-marketplace") && (
-          <BrickModal
-            bricks={panelExtensionPoints ?? []}
-            caption="Select panel foundation"
-            renderButton={(onClick) => (
-              <Button
-                variant="info"
-                onClick={onClick}
-                disabled={!panelExtensionPoints?.length}
-              >
-                <FontAwesomeIcon icon={faSearch} /> Search Marketplace
-              </Button>
-            )}
-            onSelect={async (block) =>
-              addExistingPanel(block as PanelWithConfig)
-            }
-          />
-        )}
+          <p>
+            <FontAwesomeIcon icon={faMousePointer} size="lg" /> Click on an
+            existing <code>div</code> or container-like element to insert a
+            panel in that container. You may also search the{" "}
+            <span className="text-info">Marketplace</span> for existing panels.
+          </p>
 
-        <Button className="ml-2" variant="danger" onClick={cancel}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
-        </Button>
-      </div>
-    </Centered>
+          <div>
+            <Alert variant="warning">
+              <FontAwesomeIcon icon={faExclamationTriangle} /> Automatic panel
+              placement is currently in <b>Alpha</b> and typically requires
+              manual configuration/adjustment
+            </Alert>
+          </div>
+        </div>
+        <div>
+          {flagOn("page-editor-extension-point-marketplace") && (
+            <BrickModal
+              bricks={panelExtensionPoints ?? []}
+              caption="Select panel foundation"
+              renderButton={(onClick) => (
+                <Button
+                  variant="info"
+                  onClick={onClick}
+                  disabled={!panelExtensionPoints?.length}
+                >
+                  <FontAwesomeIcon icon={faSearch} /> Search Marketplace
+                </Button>
+              )}
+              onSelect={async (block) =>
+                addExistingPanel(block as PanelWithConfig)
+              }
+            />
+          )}
+
+          <Button className="ml-2" variant="danger" onClick={cancel}>
+            <FontAwesomeIcon icon={faTimes} /> Cancel
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 

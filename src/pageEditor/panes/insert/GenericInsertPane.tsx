@@ -16,12 +16,10 @@
  */
 
 import React, { useCallback, useEffect } from "react";
-import paneStyles from "@/pageEditor/panes/Pane.module.scss";
 import styles from "./GenericInsertPane.module.scss";
 import { useDispatch } from "react-redux";
 import useAvailableExtensionPoints from "@/pageEditor/hooks/useAvailableExtensionPoints";
-import Centered from "@/pageEditor/components/Centered";
-import { Button, Row } from "react-bootstrap";
+import { Button, Modal, Row } from "react-bootstrap";
 import BrickModal from "@/components/brickModalNoTags/BrickModal";
 import { editorSlice } from "@/pageEditor/slices/editorSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,8 +35,6 @@ import {
 } from "@/contentScript/messenger/api";
 import { FormState } from "@/pageEditor/extensionPoints/formStateTypes";
 import { getExampleBlockPipeline } from "@/pageEditor/exampleExtensionConfig";
-import useFlags from "@/hooks/useFlags";
-import Loader from "@/components/Loader";
 
 const { addElement } = editorSlice.actions;
 
@@ -46,10 +42,10 @@ const GenericInsertPane: React.FunctionComponent<{
   cancel: () => void;
   config: ElementConfig;
 }> = ({ cancel, config }) => {
-  const { flagOn } = useFlags();
   const dispatch = useDispatch();
 
-  const showMarketplace = flagOn("page-editor-extension-point-marketplace");
+  const showMarketplace = true;
+  const extensionPoints = useAvailableExtensionPoints(config.baseClass);
 
   const start = useCallback(
     async (state: FormState) => {
@@ -126,47 +122,48 @@ const GenericInsertPane: React.FunctionComponent<{
     }
   }, [showMarketplace, addNew]);
 
-  const extensionPoints = useAvailableExtensionPoints(config.baseClass);
-
   if (!showMarketplace) {
-    // The insert pane will flash up quickly while the addNew is running.
-    return <Loader />;
+    return null;
   }
 
   return (
-    <Centered isScrollable>
-      <div className={paneStyles.title}>Build new {config.label} extension</div>
-      {config.InsertModeHelpText && (
-        <div className="text-left">
-          <config.InsertModeHelpText />
-        </div>
-      )}
-      <Row className={styles.buttonRow}>
-        <Button variant="primary" onClick={addNew}>
-          <FontAwesomeIcon icon={faPlus} /> Create new {config.label}
-        </Button>
+    <Modal show onHide={cancel}>
+      <Modal.Header closeButton>
+        Build new {config.label} extension
+      </Modal.Header>
+      <Modal.Body>
+        {config.InsertModeHelpText && (
+          <div className="text-left">
+            <config.InsertModeHelpText />
+          </div>
+        )}
+        <Row className={styles.buttonRow}>
+          <Button variant="primary" onClick={addNew}>
+            <FontAwesomeIcon icon={faPlus} /> Create new {config.label}
+          </Button>
 
-        <BrickModal
-          bricks={extensionPoints ?? []}
-          renderButton={(onClick) => (
-            <Button
-              variant="info"
-              onClick={onClick}
-              disabled={!extensionPoints?.length}
-              className={styles.searchButton}
-            >
-              <FontAwesomeIcon icon={faSearch} /> Search Marketplace
-            </Button>
-          )}
-          onSelect={async (block) => addExisting(block)}
-        />
-      </Row>
-      <Row className={styles.cancelRow}>
-        <Button variant="danger" className="m-3" onClick={cancel}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
-        </Button>
-      </Row>
-    </Centered>
+          <BrickModal
+            bricks={extensionPoints ?? []}
+            renderButton={(onClick) => (
+              <Button
+                variant="info"
+                onClick={onClick}
+                disabled={!extensionPoints?.length}
+                className={styles.searchButton}
+              >
+                <FontAwesomeIcon icon={faSearch} /> Search Marketplace
+              </Button>
+            )}
+            onSelect={async (block) => addExisting(block)}
+          />
+        </Row>
+        <Row className={styles.cancelRow}>
+          <Button variant="danger" className="m-3" onClick={cancel}>
+            <FontAwesomeIcon icon={faTimes} /> Cancel
+          </Button>
+        </Row>
+      </Modal.Body>
+    </Modal>
   );
 };
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return -- TODO: Can autofix, do soon */
 /*
  * Copyright (C) 2022 PixieBrix, Inc.
  *
@@ -91,6 +92,26 @@ const Editor: React.FunctionComponent = () => {
     elements
   );
 
+  const insertPaneModal = useMemo(() => {
+    if (!inserting) {
+      return;
+    }
+
+    switch (inserting) {
+      case "menuItem":
+        return <InsertMenuItemPane cancel={cancelInsert} />;
+      case "panel":
+        return <InsertPanelPane cancel={cancelInsert} />;
+      default:
+        return (
+          <GenericInsertPane
+            cancel={cancelInsert}
+            config={ADAPTERS.get(inserting)}
+          />
+        );
+    }
+  }, [inserting, cancelInsert]);
+
   const body = useMemo(() => {
     if (restrict("page-editor")) {
       return <RestrictedPane />;
@@ -107,21 +128,7 @@ const Editor: React.FunctionComponent = () => {
       return <BetaPane />;
     }
 
-    if (inserting) {
-      switch (inserting) {
-        case "menuItem":
-          return <InsertMenuItemPane cancel={cancelInsert} />;
-        case "panel":
-          return <InsertPanelPane cancel={cancelInsert} />;
-        default:
-          return (
-            <GenericInsertPane
-              cancel={cancelInsert}
-              config={ADAPTERS.get(inserting)}
-            />
-          );
-      }
-    } else if (editorError) {
+    if (editorError) {
       return (
         <div className="p-2">
           <span className="text-danger">{editorError}</span>
@@ -151,23 +158,22 @@ const Editor: React.FunctionComponent = () => {
     connecting,
     editorError,
     beta,
-    inserting,
     activeElementId,
     activeRecipeId,
     availableDynamicIds?.size,
     installed.length,
     unavailableCount,
-    cancelInsert,
   ]);
 
   return (
     <>
       <div className={styles.root}>
-        {!(inserting || restrict("page-editor")) && <Sidebar />}
+        {!restrict("page-editor") && <Sidebar />}
         {body}
       </div>
 
       <Modals />
+      {insertPaneModal}
     </>
   );
 };

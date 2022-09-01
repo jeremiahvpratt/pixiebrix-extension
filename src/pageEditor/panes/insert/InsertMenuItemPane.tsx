@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import styles from "@/pageEditor/panes/Pane.module.scss";
-
 import React from "react";
 import config from "@/pageEditor/extensionPoints/menuItem";
 import useAvailableExtensionPoints from "@/pageEditor/hooks/useAvailableExtensionPoints";
@@ -24,8 +22,7 @@ import {
   MenuDefinition,
   MenuItemExtensionPoint,
 } from "@/extensionPoints/menuItemExtension";
-import Centered from "@/pageEditor/components/Centered";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button, Modal } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfo,
@@ -54,10 +51,9 @@ const InsertMenuItemPane: React.FunctionComponent<{ cancel: () => void }> = ({
   const addExisting = useAddExisting(config, cancel);
 
   return (
-    <Centered isScrollable>
-      <div className={styles.title}>Inserting Button/Menu Item</div>
-
-      <div className="text-left">
+    <Modal show onHide={cancel}>
+      <Modal.Header closeButton>Inserting Button or Menu Item</Modal.Header>
+      <Modal.Body>
         <p>
           <FontAwesomeIcon icon={faMousePointer} size="lg" /> Click on an
           existing <code>button</code> or button-like element to add a button to
@@ -72,30 +68,32 @@ const InsertMenuItemPane: React.FunctionComponent<{ cancel: () => void }> = ({
             placement.
           </Alert>
         </div>
-      </div>
-      <div>
-        {flagOn("page-editor-extension-point-marketplace") && (
-          <BrickModal
-            bricks={menuItemExtensionPoints ?? []}
-            caption="Select button foundation"
-            renderButton={(onClick) => (
-              <Button
-                variant="info"
-                onClick={onClick}
-                disabled={!menuItemExtensionPoints?.length}
-              >
-                <FontAwesomeIcon icon={faSearch} /> Search Marketplace
-              </Button>
-            )}
-            onSelect={async (block) => addExisting(block as MenuItemWithConfig)}
-          />
-        )}
+        <div>
+          {flagOn("page-editor-extension-point-marketplace") && (
+            <BrickModal
+              bricks={menuItemExtensionPoints ?? []}
+              caption="Select button foundation"
+              renderButton={(onClick) => (
+                <Button
+                  variant="info"
+                  onClick={onClick}
+                  disabled={!menuItemExtensionPoints?.length}
+                >
+                  <FontAwesomeIcon icon={faSearch} /> Search Marketplace
+                </Button>
+              )}
+              onSelect={async (block) =>
+                addExisting(block as MenuItemWithConfig)
+              }
+            />
+          )}
 
-        <Button variant="danger" className="ml-2" onClick={cancel}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
-        </Button>
-      </div>
-    </Centered>
+          <Button variant="danger" className="ml-2" onClick={cancel}>
+            <FontAwesomeIcon icon={faTimes} /> Cancel
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 
