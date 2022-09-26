@@ -23,8 +23,8 @@ import { InstallableViewItem } from "./blueprintsTypes";
 type View = "list" | "grid";
 
 type ActiveTab = {
-  key: string;
-  tabTitle: string;
+  key: string | null;
+  tabTitle: string | null;
   filters: Filters<InstallableViewItem>;
 };
 
