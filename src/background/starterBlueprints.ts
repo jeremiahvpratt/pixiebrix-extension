@@ -28,6 +28,10 @@ import { debounce } from "lodash";
 const { reducer, actions } = extensionsSlice;
 
 const PLAYGROUND_URL = "https://www.pixiebrix.com/playground";
+const INSTALL_PLAYGROUND_BLUEPRINTS_URLS = [
+  PLAYGROUND_URL,
+  "https://web.pixiebrix.com/playground",
+];
 let isInstallingBlueprints = false;
 const BLUEPRINT_INSTALLATION_DEBOUNCE_MS = 10_000;
 const BLUEPRINT_INSTALLATION_MAX_MS = 60_000;
@@ -159,7 +163,11 @@ export async function firstTimeInstallStarterBlueprints(): Promise<void> {
 
 function initStarterBlueprints(): void {
   browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (tab?.url?.startsWith(PLAYGROUND_URL)) {
+    if (
+      INSTALL_PLAYGROUND_BLUEPRINTS_URLS.some((url) =>
+        tab?.url?.startsWith(url)
+      )
+    ) {
       void debouncedInstallStarterBlueprints();
     }
   });
