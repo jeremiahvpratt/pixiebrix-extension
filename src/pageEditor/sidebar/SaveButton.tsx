@@ -16,22 +16,15 @@
  */
 
 import React from "react";
-import AsyncButton from "@/components/AsyncButton";
+import AsyncButton, { AsyncButtonProps } from "@/components/AsyncButton";
 import cx from "classnames";
 import rootStyles from "./ActionButtons.module.scss";
 import styles from "./SaveButton.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 
-const SaveButton: React.FC<{
-  onClick: () => void;
-  disabled?: boolean;
-}> = ({ onClick, disabled }) => (
-  <AsyncButton
-    onClick={onClick}
-    disabled={disabled}
-    className={cx(rootStyles.button, styles.save)}
-  >
+const SaveButton: React.FC<AsyncButtonProps> = (props) => (
+  <AsyncButton className={cx(rootStyles.button, styles.save)} {...props}>
     <FontAwesomeIcon icon={faSave} />
   </AsyncButton>
 );

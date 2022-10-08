@@ -152,8 +152,8 @@ const ServiceEditorModal: React.FunctionComponent<OwnProps> = ({
           {onDelete && (
             <AsyncButton
               variant="outline-danger"
-              onClick={() => {
-                onDelete(originalConfiguration.id);
+              onClick={async () => {
+                await onDelete(originalConfiguration.id);
               }}
             >
               Delete

@@ -201,8 +201,8 @@ const ServicesEditor: React.FunctionComponent<OwnProps> = ({
           configuration={activeConfiguration ?? newConfiguration}
           service={activeService ?? newConfigurationService}
           onDelete={activeConfiguration && handleDelete}
-          onClose={() => {
-            navigate("/services");
+          onClose={async () => {
+            await navigate("/services");
           }}
           onSave={handleSave}
         />

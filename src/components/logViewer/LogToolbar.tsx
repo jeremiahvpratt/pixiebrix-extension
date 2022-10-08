@@ -15,13 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import type { MessageLevel } from "@/background/logging";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync, faTrash } from "@fortawesome/free-solid-svg-icons";
 import React, { useCallback } from "react";
 import notify from "@/utils/notify";
-import AsyncButton from "@/components/AsyncButton";
 import Pagination from "@/components/pagination/Pagination";
 
 const LogToolbar: React.FunctionComponent<{
@@ -98,17 +97,17 @@ const LogToolbar: React.FunctionComponent<{
               {numNew} new {numNew > 1 ? "entries" : "entry"}
             </span>
           )}
-          <AsyncButton size="sm" variant="info" onClick={onRefresh}>
+          <Button size="sm" variant="info" onClick={onRefresh}>
             <FontAwesomeIcon icon={faSync} /> Refresh
-          </AsyncButton>
-          <AsyncButton
+          </Button>
+          <Button
             size="sm"
             disabled={!hasEntries}
             variant="danger"
             onClick={onClear}
           >
             <FontAwesomeIcon icon={faTrash} /> Clear
-          </AsyncButton>
+          </Button>
         </Form.Group>
       </div>
     </div>

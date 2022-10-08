@@ -15,11 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React from "react";
 import { Button, ButtonProps } from "react-bootstrap";
+import { useAsyncFn } from "react-use";
+import { Asyncify } from "type-fest";
 
+export type AsyncEventHandler = Asyncify<React.MouseEventHandler>;
 export type AsyncButtonProps = ButtonProps & {
-  onClick: (() => Promise<void>) | (() => void);
+  onClick: AsyncEventHandler;
+  // TODO: Actually follow this, it's currently ignored
   autoFocus?: boolean;
 };
 
@@ -29,35 +33,15 @@ const AsyncButton: React.FunctionComponent<AsyncButtonProps> = ({
   disabled: manualDisabled = false,
   ...buttonProps
 }) => {
-  const mounted = useRef(false);
-  const [pending, setPending] = useState(false);
-
-  useEffect(() => {
-    // https://stackoverflow.com/a/66555159/402560
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
-
-  const handleClick = useCallback(async () => {
-    setPending(true);
-    try {
-      await onClick();
-    } finally {
-      if (mounted.current) {
-        setPending(false);
-      }
-    }
-  }, [onClick]);
+  const [state, handleClick] = useAsyncFn(onClick, []);
 
   return (
     <Button
-      disabled={manualDisabled || pending}
+      disabled={manualDisabled || state.loading}
       {...buttonProps}
       onClick={(event) => {
         event.stopPropagation();
-        void handleClick();
+        handleClick(event);
       }}
     >
       {children}

@@ -28,7 +28,6 @@ import {
   faShieldAlt,
   faSync,
 } from "@fortawesome/free-solid-svg-icons";
-import AsyncButton from "@/components/AsyncButton";
 
 const Status: React.VoidFunctionComponent<{
   installableViewItem: InstallableViewItem;
@@ -57,9 +56,9 @@ const Status: React.VoidFunctionComponent<{
   if (requestPermissions) {
     // Use "Allow" for caption because the original "Grant Permissions" was too long
     return (
-      <AsyncButton size="sm" variant="info" onClick={requestPermissions}>
+      <Button size="sm" variant="info" onClick={requestPermissions}>
         <FontAwesomeIcon icon={faShieldAlt} /> Allow
-      </AsyncButton>
+      </Button>
     );
   }
 
