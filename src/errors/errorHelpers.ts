@@ -58,6 +58,7 @@ export const IGNORED_ERROR_PATTERNS = [
   "Network Error",
   "Promise was cancelled",
   "Action cancelled",
+  "Component was unmounted",
   "User cancelled the action",
   "Uncaught Error: PixieBrix contentScript already installed",
   "Could not establish connection. Receiving end does not exist.",

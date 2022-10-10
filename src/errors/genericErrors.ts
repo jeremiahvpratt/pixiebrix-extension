@@ -88,3 +88,9 @@ export class PromiseCancelled extends Error {
 export class IncompatibleServiceError extends SuspiciousOperationError {
   override name = "IncompatibleServiceError";
 }
+
+/** Not an error, React component was just unmounted */
+export class AbortViaUnmount extends DOMException {
+  override name = "AbortViaUnmount";
+  override message = "Component was unmounted";
+}

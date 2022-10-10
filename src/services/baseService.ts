@@ -18,8 +18,8 @@
 import { isEmpty } from "lodash";
 import { ManualStorageKey, readStorage, setStorage } from "@/chrome";
 import { isExtensionContext } from "webext-detect-page";
-import { useAsyncEffect } from "use-async-effect";
 import { useCallback, useState } from "react";
+import useAsyncEffect from "@/hooks/useAsyncEffect";
 
 export const DEFAULT_SERVICE_URL = process.env.SERVICE_URL;
 export const SERVICE_STORAGE_KEY = "service-url" as ManualStorageKey;
@@ -65,9 +65,9 @@ export function useConfiguredHost(): ConfiguredHostResult {
   const [state, setState] = useState<ConfiguredHost>();
 
   useAsyncEffect(
-    async (isMounted) => {
+    async (signal) => {
       const configured = await readStorage<ConfiguredHost>(SERVICE_STORAGE_KEY);
-      if (!isMounted()) return;
+      if (signal.aborted) return;
       setState(configured);
     },
     [setState]
