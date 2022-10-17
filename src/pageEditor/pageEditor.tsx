@@ -19,7 +19,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@/vendors/overrides.scss";
 import "@/utils/layout.scss";
 
-import "@/extensionContext";
+import "@/globals/extensionContext";
 import "@/development/darkMode";
 
 import registerMessenger from "@/pageEditor/messenger/registration";

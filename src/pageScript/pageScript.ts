@@ -20,8 +20,7 @@
  */
 
 import { uuidv4 } from "@/types/helpers";
-// eslint-disable-next-line import/no-unassigned-import -- monkey patching import
-import "@/utils/jqueryHack";
+import "@/globals/jqueryHack";
 
 const JQUERY_WINDOW_PROP = "$$jquery";
 const PAGESCRIPT_SYMBOL = Symbol.for("pixiebrix-page-script");

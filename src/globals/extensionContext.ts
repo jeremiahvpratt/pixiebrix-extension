@@ -16,16 +16,13 @@
  */
 
 // Init rollbar early so we get error reporting on the other initialization
-import "@/telemetry/reportUncaughtErrors";
+import "@/globals/reportUncaughtErrors";
 
 // We don't use native, full-page-reload form submissions
-// eslint-disable-next-line import/no-unassigned-import -- Auto-initialization
-import "@/utils/preventNativeFormSubmission";
+import "@/globals/preventNativeFormSubmission";
 
 // Handles common HTTP errors
-import enrichAxiosErrors from "@/utils/enrichAxiosErrors";
-
-enrichAxiosErrors();
+import "@/globals/enrichAxiosErrors";
 
 // https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = chrome.runtime.getURL("/");

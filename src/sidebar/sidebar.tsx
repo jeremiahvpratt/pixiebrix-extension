@@ -21,7 +21,7 @@ import "@/vendors/overrides.scss";
 import "@/utils/layout.scss";
 import "./sidebar.scss";
 
-import "@/extensionContext";
+import "@/globals/extensionContext";
 
 import registerMessenger from "@/sidebar/messenger/registration";
 import App from "@/sidebar/SidebarApp";

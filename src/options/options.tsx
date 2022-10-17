@@ -19,7 +19,7 @@ import "@/vendors/theme/app/app.scss";
 import "@/vendors/overrides.scss";
 import "./options.scss";
 
-import "@/extensionContext";
+import "@/globals/extensionContext";
 import "@/development/darkMode";
 
 import { render } from "react-dom";

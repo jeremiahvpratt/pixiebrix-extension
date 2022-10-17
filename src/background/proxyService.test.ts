@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import "@/globals/enrichAxiosErrors";
 import { RawServiceConfiguration, ServiceConfig } from "@/core";
 import serviceRegistry from "@/services/registry";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
@@ -25,7 +26,6 @@ import { proxyService } from "./requests";
 import * as token from "@/auth/token";
 import * as locator from "@/services/locator";
 import { validateRegistryId } from "@/types/helpers";
-import enrichAxiosErrors from "@/utils/enrichAxiosErrors";
 import { sanitizedServiceConfigurationFactory } from "@/testUtils/factories";
 import { ContextError } from "@/errors/genericErrors";
 import { RemoteServiceError } from "@/errors/clientRequestErrors";
@@ -52,8 +52,6 @@ jest.mock("@/background/auth", () => ({
 jest.mock("@/auth/token");
 jest.mock("webext-detect-page");
 jest.mock("@/services/locator");
-
-enrichAxiosErrors();
 
 const Locator = locator.default;
 

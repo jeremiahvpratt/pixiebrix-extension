@@ -33,14 +33,6 @@ import {
 // eslint-disable-next-line prefer-destructuring -- It breaks EnvironmentPlugin
 const SERVICE_URL = process.env.SERVICE_URL;
 
-export default function enrichAxiosErrors(): void {
-  expectContext("extension");
-
-  // Automatically wraps common Axios errors whenever possible
-  // https://axios-http.com/docs/interceptors
-  axios.interceptors.response.use(undefined, enrichBusinessRequestError);
-}
-
 /**
  * Turn AxiosErrors into BusinessErrors whenever possible
  */
@@ -85,3 +77,13 @@ async function enrichBusinessRequestError(error: unknown): Promise<never> {
 
   throw new ClientNetworkError(NO_RESPONSE_MESSAGE, { cause: error });
 }
+
+function init(): void {
+  expectContext("extension");
+
+  // Automatically wraps common Axios errors whenever possible
+  // https://axios-http.com/docs/interceptors
+  axios.interceptors.response.use(undefined, enrichBusinessRequestError);
+}
+
+init();

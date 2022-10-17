@@ -48,12 +48,11 @@ module.exports = {
         allow: [
           "**/*.css",
           "**/*.scss",
+          "@/globals/*", // Must be run before other code
           "@/development/*",
           "@/background/messenger/external/api",
-          "@/extensionContext", // Must be run before other code
-          "@/background/axiosFetch", // Must be run before other code
-          "@/telemetry/reportUncaughtErrors",
           "@testing-library/jest-dom",
+          "urlpattern-polyfill",
           "webext-dynamic-content-scripts", // Automatic registration
           "regenerator-runtime/runtime", // Automatic registration
         ],

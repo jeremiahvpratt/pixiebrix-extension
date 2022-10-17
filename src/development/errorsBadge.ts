@@ -17,7 +17,7 @@
 
 import { getErrorMessage } from "@/errors/errorHelpers";
 import { browserAction } from "@/mv3/api";
-import { uncaughtErrorHandlers } from "@/telemetry/reportUncaughtErrors";
+import { uncaughtErrorHandlers } from "@/globals/reportUncaughtErrors";
 
 let counter = 0;
 let timer: NodeJS.Timeout;

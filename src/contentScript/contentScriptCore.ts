@@ -17,7 +17,7 @@
 
 import "./contentScript.scss";
 
-import "@/extensionContext";
+import "@/globals/extensionContext";
 
 // Normal imports
 // eslint-disable-next-line import/no-restricted-paths -- Legacy code, needs https://github.com/pixiebrix/webext-messenger/issues/6
@@ -37,7 +37,7 @@ import {
   isContextInvalidatedError,
   notifyContextInvalidated,
 } from "@/errors/contextInvalidated";
-import { uncaughtErrorHandlers } from "@/telemetry/reportUncaughtErrors";
+import { uncaughtErrorHandlers } from "@/globals/reportUncaughtErrors";
 import { UUID } from "@/core";
 
 function ignoreContextInvalidatedErrors(

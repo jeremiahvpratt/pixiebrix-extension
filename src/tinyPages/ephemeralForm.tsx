@@ -18,7 +18,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ephemeralForm.scss";
 
-import "@/extensionContext";
+import "@/globals/extensionContext";
 
 import React from "react";
 import { render } from "react-dom";
