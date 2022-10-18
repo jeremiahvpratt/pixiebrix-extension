@@ -63,32 +63,17 @@ describe("checkAvailableInstalledExtensions", () => {
     });
 
     const availableButtonExtensionPoint = menuItemExtensionPointFactory({
-      // @ts-expect-error -- Not sure what's wrong here, possibly TS struggling with the generics?
-      extensions: [availableButton],
       id: availableButtonId,
       permissions: {
         origins: [testUrl],
         permissions: ["tabs", "webNavigation"],
       },
-      _definition: {
-        isAvailable: {
-          matchPatterns: [testUrl],
-        },
-      },
     });
     const availableQuickbarExtensionPoint = quickBarExtensionPointFactory({
-      // @ts-expect-error -- Not sure what's wrong here, possibly TS struggling with the generics?
-      extensions: [availableQb],
       id: availableQbId,
       documentUrlPatterns: [testUrl],
       permissions: {
         origins: [testUrl],
-      },
-      _definition: {
-        documentUrlPatterns: [testUrl],
-        isAvailable: {
-          matchPatterns: [testUrl],
-        },
       },
     });
     (getInstalledExtensionPoints as jest.Mock).mockResolvedValue([

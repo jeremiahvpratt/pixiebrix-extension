@@ -714,8 +714,6 @@ export const marketplaceListingFactory = define<MarketplaceListing>({
 
 export const quickBarExtensionPointFactory =
   define<RemoteQuickBarExtensionPoint>({
-    // @ts-expect-error -- Not sure what's wrong here, possibly TS struggling with the generics?
-    extensions: () => [] as Array<ResolvedExtension<MenuItemExtensionConfig>>,
     icon: "",
     id: (n: number) => validateRegistryId(`test/quickbar-extension-point-${n}`),
     inputSchema: () =>
@@ -739,31 +737,20 @@ export const quickBarExtensionPointFactory =
         },
         ["title", "action"]
       ),
-    instanceId: uuidSequence,
     kind(): "quickBar" {
       return "quickBar";
     },
     name: (n: number) => `Test Quickbar Extension Point - ${n}`,
     permissions: {},
-    uninstalled: false,
-    _definition: {
-      contexts: ["all"],
-      documentUrlPatterns: [],
-      targetMode: "eventTarget",
-      isAvailable: {
-        matchPatterns: [],
-        selectors: [],
-        urlSelectors: [],
-      },
-      reader: [],
+    // @ts-expect-error -- defining a private property for testing
+    _definition: () => ({
       type: "quickBar",
-    },
+    }),
   });
 
 export const menuItemExtensionPointFactory =
+  // @ts-expect-error -- defining only required properties for testing
   define<RemoteMenuItemExtensionPoint>({
-    // @ts-expect-error -- Not sure what's wrong here, possibly TS struggling with the generics?
-    extensions: () => [] as Array<ResolvedExtension<MenuItemExtensionConfig>>,
     icon: "",
     id: (n: number) => validateRegistryId(`test/button-extension-point-${n}`),
     inputSchema: () =>
@@ -808,23 +795,9 @@ export const menuItemExtensionPointFactory =
         },
         ["caption", "action"]
       ),
-    instanceId: uuidSequence,
     kind(): "menuItem" {
       return "menuItem";
     },
     name: (n: number) => `Test Button Extension Point - ${n}`,
     permissions: {},
-    uninstalled: false,
-    _definition: {
-      containerSelector: "",
-      isAvailable: {
-        matchPatterns: [],
-        selectors: [],
-        urlSelectors: [],
-      },
-      position: "append",
-      reader: [],
-      template: "",
-      type: "menuItem",
-    },
   });
