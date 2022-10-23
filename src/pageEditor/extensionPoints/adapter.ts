@@ -31,6 +31,7 @@ import { type ElementConfig } from "@/pageEditor/extensionPoints/elementConfig";
 import { hasInnerExtensionPoint } from "@/registry/internal";
 import { type FormState } from "@/pageEditor/extensionPoints/formStateTypes";
 import { type DynamicDefinition } from "@/contentScript/pageEditor/types";
+import pMemoize from "p-memoize";
 
 export const ADAPTERS = new Map<ExtensionPointType, ElementConfig>([
   ["trigger", triggerExtension],
@@ -65,7 +66,7 @@ export async function selectType(
   return extensionPoint.definition.type;
 }
 
-export async function extensionToFormState(
+async function _extensionToFormState(
   extension: IExtension
 ): Promise<FormState> {
   const type = await selectType(extension);
@@ -86,3 +87,5 @@ export function formStateToDynamicElement(
   const elementConfig = ADAPTERS.get(formState.type);
   return elementConfig.asDynamicElement(formState);
 }
+
+export const extensionToFormState = pMemoize(_extensionToFormState);
