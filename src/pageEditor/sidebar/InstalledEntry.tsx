@@ -38,13 +38,10 @@ import {
   disableOverlay,
   enableOverlay,
   removeExtension,
-  showSidebar,
 } from "@/contentScript/messenger/api";
 import { thisTab } from "@/pageEditor/utils";
 import { resolveDefinitions } from "@/registry/internal";
 import cx from "classnames";
-import { selectSessionId } from "@/pageEditor/slices/sessionSelectors";
-import { reportEvent } from "@/telemetry/events";
 import {
   selectActiveElement,
   selectActiveRecipeId,
@@ -60,7 +57,6 @@ const InstalledEntry: React.FunctionComponent<{
   isAvailable: boolean;
   isNested?: boolean;
 }> = ({ extension, recipes, isAvailable, isNested = false }) => {
-  const sessionId = useSelector(selectSessionId);
   const dispatch = useDispatch();
   const [type] = useAsyncState(
     async () => selectType(extension),
@@ -79,11 +75,6 @@ const InstalledEntry: React.FunctionComponent<{
   const selectHandler = useCallback(
     async (extension: IExtension) => {
       try {
-        reportEvent("PageEditorOpen", {
-          sessionId,
-          extensionId: extension.id,
-        });
-
         // Remove the extension so that we don't get double-actions when editing a trigger.
         // At this point the extensionPointId can be a
         const resolved = await resolveDefinitions(extension);
@@ -97,22 +88,12 @@ const InstalledEntry: React.FunctionComponent<{
         // -- We can remove the extension once we're also persisting the editor slice
         dispatch(actions.selectInstalled(state));
         dispatch(actions.checkActiveElementAvailability());
-
-        if (type === "actionPanel") {
-          // Switch the sidepanel over to the panel. However, don't refresh because the user might be switching
-          // frequently between extensions within the same blueprint.
-          void showSidebar(thisTab, {
-            extensionId: extension.id,
-            force: true,
-            refresh: false,
-          });
-        }
       } catch (error) {
         reportError(error);
         dispatch(actions.adapterError({ uuid: extension.id, error }));
       }
     },
-    [dispatch, sessionId, recipes, type]
+    [dispatch, recipes]
   );
 
   const isButton = type === "menuItem";

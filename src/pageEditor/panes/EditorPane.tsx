@@ -34,6 +34,10 @@ import {
   selectActiveElement,
   selectSelectionSeq,
 } from "@/pageEditor/slices/editorSelectors";
+import { showSidebar } from "@/contentScript/messenger/api";
+import { thisTab } from "@/pageEditor/utils";
+import { reportEvent } from "@/telemetry/events";
+import { selectSessionId } from "@/pageEditor/slices/sessionSelectors";
 
 // CHANGE_DETECT_DELAY_MILLIS should be low enough so that sidebar gets updated in a reasonable amount of time, but
 // high enough that there isn't an entry lag in the page editor
@@ -79,9 +83,26 @@ const EditorPaneContent: React.VoidFunctionComponent<{
 const EditorPane: React.VFC = () => {
   const activeElement = useSelector(selectActiveElement);
   const selectionSeq = useSelector(selectSelectionSeq);
+  const sessionId = useSelector(selectSessionId);
   // Key to force reload of component when user selects a different element from the sidebar
   const key = `${activeElement.uuid}-${activeElement.installed}-${selectionSeq}`;
 
+  useEffect(() => {
+    reportEvent("PageEditorOpen", {
+      sessionId,
+      extensionId: activeElement.uuid,
+    });
+
+    if (activeElement.type === "actionPanel") {
+      // Switch the sidepanel over to the panel. However, don't refresh because the user might be switching
+      // frequently between extensions within the same blueprint.
+      void showSidebar(thisTab, {
+        extensionId: activeElement.uuid,
+        force: true,
+        refresh: false,
+      });
+    }
+  }, [activeElement, sessionId]);
   return (
     <>
       <ErrorBoundary key={key}>

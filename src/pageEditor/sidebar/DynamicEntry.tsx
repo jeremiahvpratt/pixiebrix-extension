@@ -27,15 +27,9 @@ import {
   UnsavedChangesIcon,
 } from "@/pageEditor/sidebar/ExtensionIcons";
 import { type UUID } from "@/core";
-import {
-  disableOverlay,
-  enableOverlay,
-  showSidebar,
-} from "@/contentScript/messenger/api";
+import { disableOverlay, enableOverlay } from "@/contentScript/messenger/api";
 import { thisTab } from "@/pageEditor/utils";
 import cx from "classnames";
-import { reportEvent } from "@/telemetry/events";
-import { selectSessionId } from "@/pageEditor/slices/sessionSelectors";
 import { type FormState } from "@/pageEditor/extensionPoints/formStateTypes";
 import {
   selectActiveElement,
@@ -64,7 +58,6 @@ const DynamicEntry: React.FunctionComponent<DynamicEntryProps> = ({
   isNested = false,
 }) => {
   const dispatch = useDispatch();
-  const sessionId = useSelector(selectSessionId);
   const activeRecipeId = useSelector(selectActiveRecipeId);
   const activeElement = useSelector(selectActiveElement);
   const isActive = activeElement?.uuid === extension.uuid;
@@ -122,22 +115,7 @@ const DynamicEntry: React.FunctionComponent<DynamicEntryProps> = ({
       }
       onMouseLeave={isButton ? async () => hideOverlay() : undefined}
       onClick={() => {
-        reportEvent("PageEditorOpen", {
-          sessionId,
-          extensionId: extension.uuid,
-        });
-
         dispatch(actions.selectElement(extension.uuid));
-
-        if (extension.type === "actionPanel") {
-          // Switch the sidepanel over to the panel. However, don't refresh because the user might be switching
-          // frequently between extensions within the same blueprint.
-          void showSidebar(thisTab, {
-            extensionId: extension.uuid,
-            force: true,
-            refresh: false,
-          });
-        }
       }}
     >
       <span
