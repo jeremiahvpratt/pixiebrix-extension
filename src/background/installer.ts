@@ -50,7 +50,8 @@ async function openInstallPage() {
 
     if (accountTabUrl.pathname === "/start") {
       const extensionStartUrl = new URL(browser.runtime.getURL("options.html"));
-      extensionStartUrl.hash = `/start${new URL(accountTab.url).search}`;
+      extensionStartUrl.hash = "/start";
+      extensionStartUrl.search = new URL(accountTab.url).search;
 
       await browser.tabs.update(accountTab.id, {
         url: extensionStartUrl.href,
