@@ -22,7 +22,6 @@ import { renderHook } from "@testing-library/react-hooks";
 
 jest.mock("@/options/pages/marketplace/AuthWidget", () => {});
 jest.mock("react-redux");
-jest.mock("connected-react-router");
 
 describe("useWizard", () => {
   test("show personalized tab", () => {

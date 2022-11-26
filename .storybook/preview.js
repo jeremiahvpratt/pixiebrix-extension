@@ -20,6 +20,9 @@ import "@/vendors/theme/app/app.scss";
 import "@/vendors/overrides.scss";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faMusic } from "@fortawesome/free-solid-svg-icons";
+import jest from "jest-mock";
+
+window.jest = jest;
 
 // https://github.com/storybookjs/storybook/issues/3798
 library.add(faMusic);
