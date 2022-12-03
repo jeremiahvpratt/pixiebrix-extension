@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { PermissionsError } from "@/errors/businessErrors";
 import { getErrorMessage } from "@/errors/errorHelpers";
 import { forbidContext } from "@/utils/expectContext";
 import chromeP from "webext-polyfill-kinda";
@@ -45,23 +46,12 @@ export async function ensureAuth(
       return token;
     }
   } catch (error) {
-    throw new Error(`Cannot get Chrome OAuth token: ${getErrorMessage(error)}`);
+    throw new Error("Cannot get Chrome OAuth token", { cause: error });
   }
 
   throw new Error(
     "Cannot get Chrome OAuth token: chrome.identity.getAuthToken did not return a token."
   );
-}
-
-class PermissionsError extends Error {
-  override name = "PermissionsError";
-
-  public readonly status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.status = status;
-  }
 }
 
 export async function handleRejection(

@@ -18,7 +18,6 @@
 import { Transformer } from "@/types";
 import { BlockArg, Schema } from "@/core";
 import { propertiesToSchema } from "@/validators/generic";
-import { getErrorMessage } from "@/errors/errorHelpers";
 import { BusinessError } from "@/errors/businessErrors";
 
 class ParseJson extends Transformer {
@@ -46,7 +45,7 @@ class ParseJson extends Transformer {
     try {
       return JSON.parse(content);
     } catch (error) {
-      throw new BusinessError(`Error parsing JSON: ${getErrorMessage(error)}`);
+      throw new BusinessError("Error parsing JSON", { cause: error });
     }
   }
 }

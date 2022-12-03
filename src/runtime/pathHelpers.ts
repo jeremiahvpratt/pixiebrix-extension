@@ -16,7 +16,6 @@
  */
 
 import { identity, toPath } from "lodash";
-import { getErrorMessage } from "@/errors/errorHelpers";
 import { cleanValue, InvalidPathError, isObject, joinName } from "@/utils";
 import { UnknownObject } from "@/types";
 
@@ -121,9 +120,7 @@ export function getPropByPath(
       try {
         value = value.apply(previous, args);
       } catch (error) {
-        throw new Error(
-          `Error running method ${part}: ${getErrorMessage(error)}`
-        );
+        throw new Error(`Error running method ${part}`, { cause: error });
       }
     }
   }

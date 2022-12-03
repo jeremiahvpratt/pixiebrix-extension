@@ -193,3 +193,11 @@ export class ProxiedRemoteServiceError extends BusinessError {
     this.response = response;
   }
 }
+
+export class PermissionsError extends BusinessError {
+  override name = "PermissionsError";
+
+  constructor(message: string, readonly status: number) {
+    super(message);
+  }
+}

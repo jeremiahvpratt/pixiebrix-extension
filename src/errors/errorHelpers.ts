@@ -143,6 +143,7 @@ const BUSINESS_ERROR_NAMES = new Set([
   "ClientNetworkPermissionError",
   "ClientNetworkError",
   "ProxiedRemoteServiceError",
+  "PermissionsError",
   "RemoteExecutionError",
   "InvalidTemplateError",
   "InvalidSelectorError",

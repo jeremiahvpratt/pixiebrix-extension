@@ -29,7 +29,6 @@ import {
   generateVerifier,
   getRandomString,
 } from "@/vendors/pkce";
-import { getErrorMessage } from "@/errors/errorHelpers";
 import { expectContext } from "@/utils/expectContext";
 import { UnknownObject } from "@/types";
 import { BusinessError } from "@/errors/businessErrors";
@@ -313,7 +312,7 @@ async function codeGrantFlow(
     });
   } catch (error) {
     console.error(error);
-    throw new Error(`Error getting OAuth2 token: ${getErrorMessage(error)}`);
+    throw new Error(`Error getting OAuth2 token`, { cause: error });
   }
 
   const { data, status, statusText } = tokenResponse;
