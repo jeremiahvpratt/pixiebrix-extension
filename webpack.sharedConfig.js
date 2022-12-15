@@ -34,6 +34,8 @@ const shared = {
   },
   resolve: {
     alias: {
+      ajv: "./src/validators/ajv-shim.js",
+
       // An existence check triggers webpack’s warnings https://github.com/handlebars-lang/handlebars.js/issues/953
       handlebars: "handlebars/dist/handlebars.js",
 
