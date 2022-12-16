@@ -15,15 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* eslint-disable no-restricted-imports -- The only allowed import :) */
 import styles from "./Loader.module.scss";
 import React from "react";
-// eslint-disable-next-line no-restricted-imports -- The only allowed import :)
 import GridLoader from "react-spinners/GridLoader";
+import { LoaderSizeMarginProps } from "react-spinners/helpers/props";
 
-const Loader: typeof GridLoader = (props) => (
-  <div className={styles.root} data-testid="loader">
-    <GridLoader {...props} />
-  </div>
-);
+type Props = LoaderSizeMarginProps & {
+  label?: string;
+};
 
-export default React.memo(Loader);
+export default function Loader({ label, ...gridProps }: Props): JSX.Element {
+  return (
+    <div className={styles.root} data-testid="loader">
+      <GridLoader {...gridProps} />
+      {label}
+    </div>
+  );
+}

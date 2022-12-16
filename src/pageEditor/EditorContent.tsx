@@ -42,6 +42,8 @@ import useCurrentUrl from "@/pageEditor/hooks/useCurrentUrl";
 import { getErrorMessage } from "@/errors/errorHelpers";
 import Alert from "@/components/Alert";
 import styles from "./EditorContent.module.scss";
+import { compact } from "lodash";
+import Loader from "@/components/Loader";
 
 const EditorContent: React.FC = () => {
   const tabHasPermissions = useSelector(selectTabHasPermissions);
@@ -128,7 +130,11 @@ const EditorContent: React.FC = () => {
     // not be moved below <NoExtensionSelectedPane>, <NoExtensionsPane>, or <WelcomePane>.
     // It loads fast enough to not require a <Loader> either.
     // https://github.com/pixiebrix/pixiebrix-extension/pull/3611
-    return null;
+    const label = compact([
+      isPendingExtensions && "Loading extensions",
+      isConnectingToContentScript && "Connecting to script",
+    ]).join("\n");
+    return <Loader label={label} />;
   }
 
   if (availableDynamicIds?.length > 0 || installed.length > unavailableCount) {

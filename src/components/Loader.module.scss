@@ -23,6 +23,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  flex-direction: column;
+  max-width: 30em;
 
   /* If the loading is quick enough, we don't need to show the message. */
   /* This leads to a cleaner loading experience since there will be one fewer flash of intermediary content. */
