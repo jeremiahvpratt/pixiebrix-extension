@@ -20,6 +20,7 @@ import React, { useCallback, useRef } from "react";
 import { Form } from "react-bootstrap";
 import { type CustomFieldWidgetProps } from "@/components/form/FieldTemplate";
 import { LinkButton } from "@/components/LinkButton";
+import { insert } from "text-field-edit";
 
 export type Snippet = {
   label: string;
@@ -40,14 +41,7 @@ const TemplateWidget: React.FC<TemplateWidgetProps> = ({
   const templateInput = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
 
   const insertSnippet = useCallback((snippet) => {
-    const { current } = templateInput;
-    const pos = current.selectionStart;
-    current.setRangeText(snippet, pos, pos);
-    current.focus();
-
-    // Trigger a DOM 'input' event
-    const event = new Event("input", { bubbles: true });
-    current.dispatchEvent(event);
+    insert(templateInput.current, snippet);
   }, []);
 
   const controlProps =
@@ -64,7 +58,7 @@ const TemplateWidget: React.FC<TemplateWidgetProps> = ({
             <LinkButton
               key={snippet.label}
               className="ml-2"
-              onClick={(event) => {
+              onClick={() => {
                 insertSnippet(snippet.value);
               }}
             >
