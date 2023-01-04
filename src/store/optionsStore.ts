@@ -15,7 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { configureStore, type Middleware } from "@reduxjs/toolkit";
+import {
+  combineReducers,
+  configureStore,
+  type Middleware,
+} from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import { createLogger } from "redux-logger";
 import { connectRouter, routerMiddleware } from "connected-react-router";
@@ -78,27 +82,34 @@ if (typeof createLogger === "function") {
   );
 }
 
+const appReducer = combineReducers({
+  router: connectRouter(hashHistory),
+  auth: persistReducer(persistAuthConfig, authSlice.reducer),
+  options: persistReducer(
+    persistExtensionOptionsConfig,
+    extensionsSlice.reducer
+  ),
+  blueprints: persistReducer(persistBlueprintsConfig, blueprintsSlice.reducer),
+  services: persistReducer(persistServicesConfig, servicesSlice.reducer),
+  // XXX: settings and workshop use the same persistor config?
+  settings: persistReducer(persistSettingsConfig, settingsSlice.reducer),
+  workshop: persistReducer(persistWorkshopConfig, workshopSlice.reducer),
+  blueprintModals: blueprintModalsSlice.reducer,
+  logs: logSlice.reducer,
+  recipes: recipesSlice.reducer,
+  [appApi.reducerPath]: appApi.reducer,
+});
+
+const rootReducer = (state, action) => {
+  if (action.type === "FOOBAR") {
+    return appReducer(undefined, action);
+  }
+
+  return appReducer(state, action);
+};
+
 const store = configureStore({
-  reducer: {
-    router: connectRouter(hashHistory),
-    auth: persistReducer(persistAuthConfig, authSlice.reducer),
-    options: persistReducer(
-      persistExtensionOptionsConfig,
-      extensionsSlice.reducer
-    ),
-    blueprints: persistReducer(
-      persistBlueprintsConfig,
-      blueprintsSlice.reducer
-    ),
-    services: persistReducer(persistServicesConfig, servicesSlice.reducer),
-    // XXX: settings and workshop use the same persistor config?
-    settings: persistReducer(persistSettingsConfig, settingsSlice.reducer),
-    workshop: persistReducer(persistWorkshopConfig, workshopSlice.reducer),
-    blueprintModals: blueprintModalsSlice.reducer,
-    logs: logSlice.reducer,
-    recipes: recipesSlice.reducer,
-    [appApi.reducerPath]: appApi.reducer,
-  },
+  reducer: rootReducer,
   middleware(getDefaultMiddleware) {
     /* eslint-disable unicorn/prefer-spread -- use .concat for proper type inference */
     return getDefaultMiddleware({

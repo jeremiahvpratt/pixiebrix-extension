@@ -35,7 +35,8 @@ import {
   selectView,
 } from "@/options/pages/blueprints/blueprintsSelectors";
 import blueprintsSlice from "@/options/pages/blueprints/blueprintsSlice";
-import { useSelector } from "react-redux";
+import { persistor } from "@/store/optionsStore";
+import { useDispatch, useSelector } from "react-redux";
 
 const BlueprintsToolbar: React.FunctionComponent<{
   tableInstance: TableInstance;
@@ -46,6 +47,8 @@ const BlueprintsToolbar: React.FunctionComponent<{
     rows,
     state: { globalFilter },
   } = tableInstance;
+
+  const dispatch = useDispatch();
 
   const [view, setView] = useReduxState(
     selectView,
@@ -94,11 +97,19 @@ const BlueprintsToolbar: React.FunctionComponent<{
       ? `${numberOfBlueprints} results for "${globalFilter}"`
       : activeTab.tabTitle;
 
+  const resetState = async () => {
+    persistor.pause();
+    dispatch({ type: "FOOBAR" });
+    persistor.persist();
+  };
+
   return (
     <div className="d-flex justify-content-between align-items-center mb-3">
       <h3 className={styles.filterTitle}>{tabContentTitle}</h3>
       {!activeTab.hideToolbar && (
         <span className="d-flex align-items-center small">
+          <Button onClick={resetState}>Reset State</Button>
+
           <Select
             className="ml-2"
             isClearable
