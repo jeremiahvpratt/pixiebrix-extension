@@ -50,6 +50,14 @@ export const neverPromise = async (...args: unknown[]): Promise<never> => {
   throw new Error("This method should not have been called");
 };
 
+// Save the unmocked one
+const { nextTick } = process;
+export const flushPromises = async () => {
+  for (let i = 0; i < 100; i++)
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise(nextTick);
+};
+
 export const waitForEffect = async () =>
   act(async () => {
     // Awaiting the async state update

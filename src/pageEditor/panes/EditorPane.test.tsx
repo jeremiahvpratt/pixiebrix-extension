@@ -42,7 +42,7 @@ import {
   teapotBlock,
 } from "@/runtime/pipelineTests/pipelineTestHelpers";
 import { defaultBlockConfig } from "@/blocks/util";
-import { waitForEffect } from "@/testUtils/testHelpers";
+import { flushPromises, waitForEffect } from "@/testUtils/testHelpers";
 import registerDefaultWidgets from "@/components/fields/schemaFields/widgets/registerDefaultWidgets";
 import userEvent from "@testing-library/user-event";
 import { JQTransformer } from "@/blocks/transformers/jq";
@@ -70,12 +70,12 @@ import { useGetTheme } from "@/hooks/useTheme";
 import { AUTOMATION_ANYWHERE_PARTNER_KEY } from "@/services/constants";
 import { RunProcess } from "@/contrib/uipath/process";
 import { act } from "react-dom/test-utils";
-import * as sinonTimers from "@sinonjs/fake-timers";
 
-let clock: sinonTimers.InstalledClock;
 async function flushAsyncEffects() {
   return act(async () => {
-    await clock.tickAsync(1000);
+    await flushPromises();
+    jest.advanceTimersByTime(1000);
+    await flushPromises();
   });
 }
 
@@ -186,17 +186,12 @@ beforeAll(async () => {
 
   (useAsyncIcon as jest.Mock).mockReturnValue(faCube);
 
-  clock = sinonTimers.install();
+  jest.useFakeTimers();
 });
 
-afterAll(() => {
-  clock.uninstall();
+afterEach(() => {
+  jest.clearAllTimers();
 });
-
-beforeEach(() => {
-  clock.reset();
-});
-afterEach(async () => clock.runAllAsync());
 
 const getPlainFormState = (): FormState =>
   formStateFactory(undefined, [
@@ -521,8 +516,6 @@ describe("can move a node up", () => {
     expect(nodes[2]).toHaveTextContent(/for-each loop/i);
     expect(nodes[3]).toHaveTextContent(/jq - json processor/i);
     expect(nodes[4]).toHaveTextContent(/echo/i);
-
-    jest.useRealTimers();
   });
 });
 
@@ -572,8 +565,6 @@ describe("can move a node down", () => {
     expect(nodes[2]).toHaveTextContent(/for-each loop/i);
     expect(nodes[3]).toHaveTextContent(/jq - json processor/i);
     expect(nodes[4]).toHaveTextContent(/echo/i);
-
-    jest.useRealTimers();
   });
 });
 

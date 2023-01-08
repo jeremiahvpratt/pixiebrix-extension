@@ -15,23 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as sinonTimers from "@sinonjs/fake-timers";
+import { flushPromises } from "@/testUtils/testHelpers";
 import AsyncAnalysisQueue from "./asyncAnalysisQueue";
 
-let clock: sinonTimers.InstalledClock;
 let queue: AsyncAnalysisQueue;
 
-beforeAll(() => {
-  clock = sinonTimers.install();
-});
+jest.useFakeTimers({ advanceTimers: 20 });
 
 beforeEach(() => {
   queue = new AsyncAnalysisQueue();
-  clock.reset();
-});
-
-afterAll(() => {
-  clock.uninstall();
 });
 
 test("runs the tasks", async () => {
@@ -44,7 +36,8 @@ test("runs the tasks", async () => {
   queue.enqueue(task3);
 
   // This will advance the clock so all 3 promises for the tasks are resolved
-  await clock.tickAsync(2);
+  jest.runOnlyPendingTimers();
+  await flushPromises();
 
   expect(task1).toHaveBeenCalled();
   expect(task2).toHaveBeenCalled();
@@ -62,7 +55,9 @@ test("allows to squeeze work between tasks", async () => {
     work("interrupted");
   }, 0);
 
-  await clock.tickAsync(3);
+  // This will advance the clock so both promises for the tasks are resolved
+  jest.runOnlyPendingTimers();
+  await flushPromises();
 
   expect(work).toHaveBeenNthCalledWith(1, "task1");
 
@@ -82,7 +77,7 @@ test("continues processing the queue after error", async () => {
   queue.enqueue(task1);
   queue.enqueue(task2);
 
-  await clock.tickAsync(1);
+  jest.advanceTimersByTime(1);
 
   expect(task2).toHaveBeenCalled();
 });
