@@ -21,6 +21,12 @@ import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 
+// 31px matches $editorActionsBarHeight
+const squareStyle = {
+  height: 31,
+  width: 31,
+} as const;
+
 const onReload = async (event: MouseEvent<HTMLElement>) => {
   if (event.shiftKey) {
     await browser.tabs.reload(browser.devtools.inspectedWindow.tabId);
@@ -41,8 +47,8 @@ const ReloadButton: React.FunctionComponent = () => (
     size="sm"
     variant="light"
     title="Shift-click to attempt to reload all contexts (in 2 seconds)"
-    className="mt-auto"
     onClick={onReload}
+    style={squareStyle}
   >
     <FontAwesomeIcon icon={faSync} />
   </Button>

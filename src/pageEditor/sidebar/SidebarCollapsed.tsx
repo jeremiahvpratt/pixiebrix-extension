@@ -38,7 +38,7 @@ const SidebarCollapsed: React.VoidFunctionComponent<{
     <div className={cx(styles.root, styles.collapsed)}>
       <Button
         variant="light"
-        className={styles.toggle}
+        className={cx(styles.toggle, "mb-auto")}
         type="button"
         onClick={expandSidebar}
       >

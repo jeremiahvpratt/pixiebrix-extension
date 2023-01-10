@@ -96,7 +96,6 @@ const AddExtensionPointButton: React.FunctionComponent = () => {
       variant="info"
       size="sm"
       title="Add"
-      id="add-extension-point"
     >
       {entries}
     </DropdownButton>
