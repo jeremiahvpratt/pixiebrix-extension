@@ -161,3 +161,17 @@ export async function reloadIfNewVersionIsReady(): Promise<
 
   return status as "throttled" | "no_update";
 }
+
+export function makeOptionsUrl(
+  pathname: `/${string}` = "/", // Type enforces initial slash
+  searchParams: Record<string, string> | URLSearchParams = {}
+): string {
+  const internalParameters =
+    searchParams instanceof URLSearchParams
+      ? searchParams
+      : new URLSearchParams(searchParams);
+
+  const publicUrl = new URL(browser.runtime.getURL("options.html"));
+  publicUrl.hash = `#${pathname}${internalParameters}`;
+  return publicUrl.href;
+}

@@ -53,6 +53,7 @@ import {
   type ServiceSlice,
 } from "./serviceFieldUtils";
 import ServiceSelectWidget from "@/components/fields/schemaFields/widgets/ServiceSelectWidget";
+import { makeOptionsUrl } from "@/chrome";
 
 const DEFAULT_SERVICE_OUTPUT_KEY = "service" as OutputKey;
 
@@ -276,7 +277,7 @@ const ServiceField: React.FunctionComponent<
           <span>
             A configured integration.{" "}
             <a
-              href={`${browser.runtime.getURL("options.html")}#/services`}
+              href={makeOptionsUrl("/services")}
               target="_blank"
               rel="noopener noreferrer"
             >

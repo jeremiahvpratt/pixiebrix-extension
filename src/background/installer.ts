@@ -28,6 +28,7 @@ import { isCommunityControlRoom } from "@/contrib/automationanywhere/aaUtils";
 import { isEmpty } from "lodash";
 import { expectContext } from "@/utils/expectContext";
 import { AUTOMATION_ANYWHERE_SERVICE_ID } from "@/contrib/automationanywhere/contract";
+import { makeOptionsUrl } from "@/chrome";
 
 const UNINSTALL_URL = "https://www.pixiebrix.com/uninstall/";
 
@@ -84,13 +85,13 @@ export async function openInstallPage() {
         // Show the Extension Console /start page, where the user will be prompted to use OAuth2 to connect their
         // AARI account. Include the Control Room hostname in the URL so that the ControlRoomOAuthForm can pre-fill
         // the URL
-        const extensionStartUrl = new URL(
-          browser.runtime.getURL("options.html")
+        const extensionStartUrl = makeOptionsUrl(
+          "/start",
+          appOnboardingTabUrl.searchParams
         );
-        extensionStartUrl.hash = `/start${appOnboardingTabUrl.search}`;
 
         await browser.tabs.update(appOnboardingTab.id, {
-          url: extensionStartUrl.href,
+          url: extensionStartUrl,
           active: true,
         });
 
@@ -159,7 +160,7 @@ export async function requirePartnerAuth(): Promise<void> {
       );
 
       if (!configs.some((x) => !x.proxy)) {
-        const extensionConsoleUrl = browser.runtime.getURL("options.html");
+        const extensionConsoleUrl = makeOptionsUrl();
 
         // Replace the Admin Console tab, if available. The Admin Console tab will be available during openInstallPage
         const [adminConsoleTab] = await browser.tabs.query({

@@ -22,6 +22,7 @@
 import { linkExtension } from "@/auth/token";
 import { type TokenAuthData } from "@/auth/authTypes";
 import { reportEvent } from "@/telemetry/events";
+import { makeOptionsUrl } from "@/chrome";
 
 const HACK_EXTENSION_LINK_RELOAD_DELAY_MS = 100;
 
@@ -52,9 +53,7 @@ type OpenOptionsOptions = {
 };
 
 export async function openMarketplace({ newTab = true }: OpenOptionsOptions) {
-  const baseUrl = browser.runtime.getURL("options.html");
-
-  const url = `${baseUrl}#/marketplace`;
+  const url = makeOptionsUrl("/marketplace");
 
   if (newTab) {
     await browser.tabs.create({ url, active: true });
@@ -87,10 +86,9 @@ export async function openActivateBlueprint({
   blueprintId,
   newTab = true,
 }: ActivateBlueprintOptions) {
-  const baseUrl = browser.runtime.getURL("options.html");
-  const url = `${baseUrl}#/marketplace/activate/${encodeURIComponent(
-    blueprintId
-  )}`;
+  const url = makeOptionsUrl(
+    `/marketplace/activate/${encodeURIComponent(blueprintId)}`
+  );
 
   reportEvent("ExternalActivate", {
     blueprintId,

@@ -23,6 +23,7 @@ import marketplaceImage from "@img/marketplace.svg";
 import useRequiredPartnerAuth from "@/auth/useRequiredPartnerAuth";
 import { useSelector } from "react-redux";
 import { selectSettings } from "@/store/settingsSelectors";
+import { makeOptionsUrl } from "@/chrome";
 
 // eslint-disable-next-line prefer-destructuring -- process.env variable
 const SERVICE_URL = process.env.SERVICE_URL;
@@ -44,26 +45,23 @@ const DefaultLogin: React.FunctionComponent = () => (
   </Col>
 );
 
-const PartnerAuth: React.FunctionComponent = () => {
-  const extensionUrl = new URL(browser.runtime.getURL("options.html")).href;
-  return (
-    <Col className="text-center">
-      <h4 className="display-6">Connect your AARI account</h4>
-      <p>
-        Authenticate with Automation Anywhere to continue using your team
-        extensions
-      </p>
-      <Button
-        className="mt-4"
-        href={extensionUrl}
-        target="_blank"
-        variant="primary"
-      >
-        <FontAwesomeIcon icon={faSignInAlt} /> Connect Account
-      </Button>
-    </Col>
-  );
-};
+const PartnerAuth: React.FunctionComponent = () => (
+  <Col className="text-center">
+    <h4 className="display-6">Connect your AARI account</h4>
+    <p>
+      Authenticate with Automation Anywhere to continue using your team
+      extensions
+    </p>
+    <Button
+      className="mt-4"
+      href={makeOptionsUrl()}
+      target="_blank"
+      variant="primary"
+    >
+      <FontAwesomeIcon icon={faSignInAlt} /> Connect Account
+    </Button>
+  </Col>
+);
 
 const LoginPanel: React.FunctionComponent = () => {
   const { authMethod } = useSelector(selectSettings);

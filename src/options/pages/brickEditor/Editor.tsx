@@ -44,6 +44,7 @@ import BrickHistory from "@/options/pages/brickEditor/BrickHistory";
 import { useParams } from "react-router";
 import { isMac } from "@/utils";
 import LogCard from "@/components/logViewer/LogCard";
+import { makeOptionsUrl } from "@/chrome";
 
 const SharingIcon: React.FunctionComponent<{
   isPublic: boolean;
@@ -78,8 +79,7 @@ function useOpenEditorTab() {
     const brick = available.find((x) => x.name === id);
     if (brick) {
       console.debug("Open editor for brick: %s", id, { brick });
-      const url = browser.runtime.getURL("options.html");
-      window.open(`${url}#/workshop/bricks/${brick.id}`);
+      window.open(makeOptionsUrl(`/workshop/bricks/${brick.id}`));
     } else {
       notify.warning(`You cannot edit brick: ${id}`);
     }
