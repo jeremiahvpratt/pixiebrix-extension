@@ -51,20 +51,11 @@ jest.mock("webext-detect-page", () => ({
   isContentScript: () => false,
 }));
 
-(browser.contextMenus as any) = {
-  update: jest.fn(),
-};
+browser.contextMenus.update = jest.fn();
 
-const updateMenuMock = browser.contextMenus.update as jest.MockedFunction<
-  typeof browser.contextMenus.update
->;
-const createMenuMock = chromeP.contextMenus.create as jest.MockedFunction<
-  typeof chromeP.contextMenus.create
->;
-const ensureContextMenuMock =
-  backgroundApi.ensureContextMenu as jest.MockedFunction<
-    typeof backgroundApi.ensureContextMenu
-  >;
+const updateMenuMock = jest.mocked(browser.contextMenus.update);
+const createMenuMock = jest.mocked(chromeP.contextMenus.create);
+const ensureContextMenuMock = jest.mocked(backgroundApi.ensureContextMenu);
 
 describe("contextMenus", () => {
   beforeEach(() => {

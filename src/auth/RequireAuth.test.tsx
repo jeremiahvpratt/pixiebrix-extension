@@ -37,17 +37,19 @@ function optionsStore(initialState?: any) {
   });
 }
 
-jest.mock("@/services/api", () => ({
-  useGetMeQuery: jest.fn(),
-}));
+jest.mock("@/services/api");
+const useGetMeQueryMock = jest.mocked(useGetMeQuery);
 
 const MockLoginPage: React.VFC = () => <div>Login</div>;
 
 describe("RequireAuth", () => {
   test("authenticated user", () => {
-    (useGetMeQuery as jest.Mock).mockImplementation(() => ({
-      isLoading: false,
-    }));
+    useGetMeQueryMock.mockImplementation(
+      () =>
+        ({
+          isLoading: false,
+        } as any)
+    );
 
     render(
       <Provider store={optionsStore({ auth: { isLoggedIn: true } })}>
@@ -64,9 +66,12 @@ describe("RequireAuth", () => {
   });
 
   test("unauthenticated user", () => {
-    (useGetMeQuery as jest.Mock).mockImplementation(() => ({
-      error: { response: { status: 401 } },
-    }));
+    useGetMeQueryMock.mockImplementation(
+      () =>
+        ({
+          error: { response: { status: 401 } },
+        } as any)
+    );
 
     render(
       <Provider store={optionsStore({ auth: { isLoggedIn: true } })}>
@@ -84,7 +89,7 @@ describe("RequireAuth", () => {
   });
 
   test("loading state does not flash content", () => {
-    (useGetMeQuery as jest.Mock).mockImplementation(() => ({
+    useGetMeQueryMock.mockImplementation(() => ({
       isLoading: true,
     }));
 
