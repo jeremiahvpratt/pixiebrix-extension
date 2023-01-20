@@ -26,6 +26,7 @@ import { useModals } from "@/components/ConfirmationModal";
 import { actions } from "@/pageEditor/slices/editorSlice";
 import { getIdForElement, getRecipeIdForElement } from "@/pageEditor/utils";
 import { clearLog } from "@/background/messenger/api";
+import { asyncForEach } from "@/utils";
 
 type Config = {
   recipeId: RegistryId;
@@ -62,10 +63,8 @@ function useRemoveRecipe(): (useRemoveConfig: Config) => Promise<void> {
           .filter((x) => getRecipeIdForElement(x) === recipeId)
           .map((x) => getIdForElement(x))
       );
-      await Promise.all(
-        extensionIds.map(async (extensionId) =>
-          removeExtension({ extensionId, shouldShowConfirmation: false })
-        )
+      await asyncForEach(extensionIds, async (extensionId) =>
+        removeExtension({ extensionId, shouldShowConfirmation: false })
       );
 
       void clearLog({

@@ -26,7 +26,7 @@ import {
 } from "@/core";
 import { updateNavigationId } from "@/contentScript/context";
 import * as sidebar from "@/contentScript/sidebarController";
-import { pollUntilTruthy } from "@/utils";
+import { asyncForEach, pollUntilTruthy } from "@/utils";
 import { NAVIGATION_RULES } from "@/contrib/navigationRules";
 import { testMatchPatterns } from "@/blocks/available";
 import reportError from "@/telemetry/reportError";
@@ -245,41 +245,39 @@ async function loadExtensions() {
 
   const extensionMap = groupBy(resolvedExtensions, (x) => x.extensionPointId);
 
-  await Promise.all(
-    Object.entries(extensionMap).map(async (entry) => {
-      // Object.entries loses the type information :sadface:
-      const [extensionPointId, extensions] = entry as unknown as [
-        RegistryId,
-        ResolvedExtension[]
-      ];
+  await asyncForEach(Object.entries(extensionMap), async (entry) => {
+    // Object.entries loses the type information :sadface:
+    const [extensionPointId, extensions] = entry as unknown as [
+      RegistryId,
+      ResolvedExtension[]
+    ];
 
-      if (extensions.length === 0 && !previousIds.has(extensionPointId)) {
-        // Ignore the case where we uninstalled the last extension, but the extension point was
-        // not deleted from the state.
-        //
-        // But for updates (i.e., re-activation flow) we need to include to so that when we run
-        // syncExtensions their elements are removed from the page
-        return;
+    if (extensions.length === 0 && !previousIds.has(extensionPointId)) {
+      // Ignore the case where we uninstalled the last extension, but the extension point was
+      // not deleted from the state.
+      //
+      // But for updates (i.e., re-activation flow) we need to include to so that when we run
+      // syncExtensions their elements are removed from the page
+      return;
+    }
+
+    try {
+      const extensionPoint = await extensionPointRegistry.lookup(
+        extensionPointId
+      );
+
+      extensionPoint.syncExtensions(extensions);
+
+      if (extensions.length > 0) {
+        // We cleared _extensionPoints prior to the loop, so we can just push w/o checking if it's already in the array
+        _extensionPoints.push(extensionPoint);
       }
-
-      try {
-        const extensionPoint = await extensionPointRegistry.lookup(
-          extensionPointId
-        );
-
-        extensionPoint.syncExtensions(extensions);
-
-        if (extensions.length > 0) {
-          // We cleared _extensionPoints prior to the loop, so we can just push w/o checking if it's already in the array
-          _extensionPoints.push(extensionPoint);
-        }
-      } catch (error) {
-        console.warn(`Error adding extension point: ${extensionPointId}`, {
-          error,
-        });
-      }
-    })
-  );
+    } catch (error) {
+      console.warn(`Error adding extension point: ${extensionPointId}`, {
+        error,
+      });
+    }
+  });
 }
 
 /**

@@ -24,6 +24,7 @@ import {
 } from "@/runtime/runtimeTypes";
 import getType from "@/runtime/getType";
 import { type BlockConfig } from "@/blocks/types";
+import { asyncForEach } from "@/utils";
 
 /**
  * A block along with inferred/calculated information
@@ -60,17 +61,15 @@ export class BlocksRegistry extends BaseRegistry<RegistryId, IBlock> {
 
     console.debug("Computing block types for %d block(s)", items.length);
 
-    await Promise.allSettled(
-      items.map(async (item) => {
-        // XXX: will we run into problems with circular dependency between getType and the registry exported from
-        //  this module? getType references the blockRegistry in order to calculate the type for composite bricks
-        //  that are defined as a pipeline of other blocks.
-        typeCache.set(item.id, {
-          block: item,
-          type: await getType(item),
-        });
-      })
-    );
+    await asyncForEach(items, async (item) => {
+      // XXX: will we run into problems with circular dependency between getType and the registry exported from
+      //  this module? getType references the blockRegistry in order to calculate the type for composite bricks
+      //  that are defined as a pipeline of other blocks.
+      typeCache.set(item.id, {
+        block: item,
+        type: await getType(item),
+      });
+    });
 
     return typeCache;
   }

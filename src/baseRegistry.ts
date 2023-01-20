@@ -22,6 +22,7 @@ import { groupBy } from "lodash";
 import { type RegistryPackage } from "@/types/contract";
 import { getErrorMessage } from "@/errors/errorHelpers";
 import { type RegistryId } from "@/core";
+import { asyncForEach } from "@/utils";
 
 export interface RegistryItem<T extends RegistryId = RegistryId> {
   id: T;
@@ -142,20 +143,18 @@ export class Registry<
   async all(): Promise<Item[]> {
     const parsedItems: Item[] = [];
 
-    await Promise.allSettled(
-      [...this.kinds.values()].map(async (kind) => {
-        for (const raw of await registry.getKind(kind)) {
-          try {
-            const parsed = this.parse(raw.config);
-            if (parsed) {
-              parsedItems.push(parsed);
-            }
-          } catch {
-            // NOP
+    await asyncForEach(this.kinds.values(), async (kind) => {
+      for (const raw of await registry.getKind(kind)) {
+        try {
+          const parsed = this.parse(raw.config);
+          if (parsed) {
+            parsedItems.push(parsed);
           }
+        } catch {
+          // NOP
         }
-      })
-    );
+      }
+    });
 
     // Perform as single call to register so listeners are notified once
     this.register(...parsedItems);
@@ -243,12 +242,11 @@ export class Registry<
       this.remote.add(item.metadata.id);
     }
 
-    await Promise.all(
-      Object.entries(groupBy(packages, (x) => x.kind)).map(
-        async ([kind, kindPackages]) => {
-          await registry.syncRemote(kind as Kind, kindPackages);
-        }
-      )
+    await asyncForEach(
+      Object.entries(groupBy(packages, (x) => x.kind)),
+      async ([kind, kindPackages]) => {
+        await registry.syncRemote(kind as Kind, kindPackages);
+      }
     );
 
     this.notifyAll();

@@ -66,6 +66,7 @@ import BackgroundLogger from "@/telemetry/BackgroundLogger";
 import { NoRendererError } from "@/errors/businessErrors";
 import { serializeError } from "serialize-error";
 import { isSidebarFrameVisible } from "@/contentScript/sidebarDomControllerLite";
+import { asyncForEach } from "@/utils";
 
 export type SidebarConfig = {
   heading: string;
@@ -253,21 +254,19 @@ export abstract class SidebarExtensionPoint extends ExtensionPoint<SidebarConfig
     const errors: unknown[] = [];
 
     // OK to run in parallel because we've fixed the order the panels appear in reservePanels
-    await Promise.all(
-      extensionsToRefresh.map(async (extension) => {
-        try {
-          await this.runExtension(readerContext, extension);
-        } catch (error) {
-          errors.push(error);
-          this.logger
-            .childLogger({
-              deploymentId: extension._deployment?.id,
-              extensionId: extension.id,
-            })
-            .error(error);
-        }
-      })
-    );
+    await asyncForEach(extensionsToRefresh, async (extension) => {
+      try {
+        await this.runExtension(readerContext, extension);
+      } catch (error) {
+        errors.push(error);
+        this.logger
+          .childLogger({
+            deploymentId: extension._deployment?.id,
+            extensionId: extension.id,
+          })
+          .error(error);
+      }
+    });
 
     if (errors.length > 0) {
       notify.error(`An error occurred adding ${errors.length} panels(s)`);

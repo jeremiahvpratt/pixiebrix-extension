@@ -32,7 +32,7 @@ import {
 } from "@/extensionPoints/contextMenu";
 import { loadOptions } from "@/store/extensionsStorage";
 import { resolveDefinitions } from "@/registry/internal";
-import { allSettledValues, memoizeUntilSettled } from "@/utils";
+import { allSettledValues, asyncForEach, memoizeUntilSettled } from "@/utils";
 import { CancelError } from "@/errors/businessErrors";
 
 const MENU_PREFIX = "pixiebrix-";
@@ -176,20 +176,19 @@ export async function preloadContextMenus(
   extensions: IExtension[]
 ): Promise<void> {
   expectContext("background");
-  await Promise.allSettled(
-    extensions.map(async (definition) => {
-      const resolved = await resolveDefinitions(definition);
 
-      const extensionPoint = await extensionPointRegistry.lookup(
-        resolved.extensionPointId
+  await asyncForEach(extensions, async (definition) => {
+    const resolved = await resolveDefinitions(definition);
+
+    const extensionPoint = await extensionPointRegistry.lookup(
+      resolved.extensionPointId
+    );
+    if (extensionPoint instanceof ContextMenuExtensionPoint) {
+      await extensionPoint.ensureMenu(
+        definition as unknown as ResolvedExtension<ContextMenuConfig>
       );
-      if (extensionPoint instanceof ContextMenuExtensionPoint) {
-        await extensionPoint.ensureMenu(
-          definition as unknown as ResolvedExtension<ContextMenuConfig>
-        );
-      }
-    })
-  );
+    }
+  });
 }
 
 async function preloadAllContextMenus(): Promise<void> {

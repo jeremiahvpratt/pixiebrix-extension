@@ -27,6 +27,7 @@ import {
 } from "@/core";
 import { cloneDeep } from "lodash";
 import { isSelectField } from "@/components/fields/schemaFields/fieldTypeCheckers";
+import { asyncForEach } from "@/utils";
 
 const VARIABLE_REGEX = /^@\S+$/;
 
@@ -88,18 +89,16 @@ async function upgradeBlock(blockConfig: BlockConfig): Promise<void> {
   // `v1`/`v2` use mustache by default
   const templateEngine = blockConfig.templateEngine ?? "mustache";
 
-  await Promise.all(
-    Object.keys(blockConfig.config).map(async (fieldName) => {
-      await upgradeValue({
-        config: blockConfig.config,
-        fieldName,
-        // eslint-disable-next-line security/detect-object-injection -- name comes from config keys
-        fieldSchema: inputProps[fieldName],
-        templateEngine,
-        blockId: blockConfig.id,
-      });
-    })
-  );
+  await asyncForEach(Object.keys(blockConfig.config), async (fieldName) => {
+    await upgradeValue({
+      config: blockConfig.config,
+      fieldName,
+      // eslint-disable-next-line security/detect-object-injection -- name comes from config keys
+      fieldSchema: inputProps[fieldName],
+      templateEngine,
+      blockId: blockConfig.id,
+    });
+  });
 
   if (blockConfig.if) {
     blockConfig.if = stringToExpression(blockConfig.if, templateEngine);
@@ -267,23 +266,21 @@ async function upgradeValue({
       // Finally, since we should now have an item schema for each item in the value
       // array, we can recursively call this function again with each item and its
       // schema from the itemSchemas array, with the current value as the parent.
-      await Promise.all(
-        value.map(async (element, index) => {
-          await upgradeValue(
-            // We have to do a kind of nasty cast here in order for the function to
-            // work with an array and index values, but thanks to javascript under
-            // the hood, this works fine. Looking up array items by array["<index>"]
-            // is valid javascript.
-            {
-              blockId,
-              config: value as unknown as UnknownObject,
-              fieldName: index.toString(),
-              fieldSchema: itemSchemas.at(index),
-              templateEngine,
-            }
-          );
-        })
-      );
+      await asyncForEach(value.keys(), async (index) => {
+        await upgradeValue(
+          // We have to do a kind of nasty cast here in order for the function to
+          // work with an array and index values, but thanks to javascript under
+          // the hood, this works fine. Looking up array items by array["<index>"]
+          // is valid javascript.
+          {
+            blockId,
+            config: value as unknown as UnknownObject,
+            fieldName: index.toString(),
+            fieldSchema: itemSchemas.at(index),
+            templateEngine,
+          }
+        );
+      });
     } else if (fieldSchema.type === "object") {
       // This section handling object values works fundamentally the same way as
       // the array section above (detailed comments there). Property schemas are
@@ -321,18 +318,16 @@ async function upgradeValue({
         }
       }
 
-      await Promise.all(
-        Object.keys(value).map(async (fieldName) => {
-          await upgradeValue({
-            blockId,
-            config: value as UnknownObject,
-            fieldName,
-            // eslint-disable-next-line security/detect-object-injection
-            fieldSchema: propertySchemas[fieldName],
-            templateEngine,
-          });
-        })
-      );
+      await asyncForEach(Object.keys(value), async (fieldName) => {
+        await upgradeValue({
+          blockId,
+          config: value as UnknownObject,
+          fieldName,
+          // eslint-disable-next-line security/detect-object-injection
+          fieldSchema: propertySchemas[fieldName],
+          templateEngine,
+        });
+      });
     }
   } else if (
     typeof value === "string" &&
@@ -358,10 +353,6 @@ export async function upgradePipelineToV3(
   blockPipeline: BlockPipeline
 ): Promise<BlockPipeline> {
   const cloned = cloneDeep(blockPipeline);
-  await Promise.all(
-    cloned.map(async (block) => {
-      await upgradeBlock(block);
-    })
-  );
+  await asyncForEach(cloned, upgradeBlock);
   return cloned;
 }

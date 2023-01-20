@@ -47,6 +47,7 @@ import { ADAPTERS } from "@/pageEditor/extensionPoints/adapter";
 import { fromJS as extensionPointFactory } from "@/extensionPoints/factory";
 import { extensionPermissions } from "@/permissions";
 import { mergePermissions, requestPermissions } from "@/utils/permissions";
+import { asyncForEach } from "@/utils";
 
 const { actions: optionsActions } = extensionsSlice;
 
@@ -179,11 +180,9 @@ function useSaveRecipe(): RecipeSaver {
     const newRecipeMetadata = selectRecipeMetadata(newRecipe, response);
 
     // Don't push to cloud since we're saving it with the recipe
-    await Promise.all(
-      dirtyRecipeElements.map(async (element) =>
-        // Permissions were already checked earlier in the save function here
-        create({ element, pushToCloud: false, checkPermissions: false })
-      )
+    await asyncForEach(dirtyRecipeElements, async (element) =>
+      // Permissions were already checked earlier in the save function here
+      create({ element, pushToCloud: false, checkPermissions: false })
     );
 
     // Update the recipe metadata on extensions in the options slice
