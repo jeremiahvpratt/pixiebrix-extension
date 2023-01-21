@@ -16,9 +16,9 @@
  */
 
 import { type ManualStorageKey, readStorage, setStorage } from "@/chrome";
+import { useAsyncState } from "@/hooks/common";
 import { boolean } from "@/utils";
-import { useCallback, useState } from "react";
-import { useAsyncEffect } from "use-async-effect";
+import { useCallback } from "react";
 
 export const DNT_STORAGE_KEY = "DNT" as ManualStorageKey;
 
@@ -37,18 +37,18 @@ export async function allowsTrack(): Promise<boolean> {
 }
 
 export function useDNT(): [boolean, (enabled: boolean) => Promise<void>] {
-  const [enabled, setEnabled] = useState<boolean>(true);
-
-  useAsyncEffect(async () => {
-    setEnabled(await getDNT());
-  }, [setEnabled]);
+  const [enabled, _, __, recalculate] = useAsyncState<boolean>(
+    getDNT,
+    [],
+    true
+  );
 
   const toggle = useCallback(
     async (enabled: boolean) => {
       await setDNT(enabled);
-      setEnabled(enabled);
+      void recalculate();
     },
-    [setEnabled]
+    [recalculate]
   );
 
   return [enabled, toggle];
