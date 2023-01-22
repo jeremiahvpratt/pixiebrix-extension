@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import styles from "./Sidebar.module.scss";
 import React, { type MouseEvent } from "react";
 import { sleep } from "@/utils";
 import { Button } from "react-bootstrap";
@@ -41,8 +42,8 @@ const ReloadButton: React.FunctionComponent = () => (
     size="sm"
     variant="light"
     title="Shift-click to attempt to reload all contexts (in 2 seconds)"
-    className="mt-auto"
     onClick={onReload}
+    className={styles.square}
   >
     <FontAwesomeIcon icon={faSync} />
   </Button>

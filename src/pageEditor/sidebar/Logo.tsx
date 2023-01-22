@@ -18,9 +18,14 @@
 import styles from "./Sidebar.module.scss";
 import React from "react";
 import logoUrl from "@/icons/custom-icons/favicon.svg";
+import cx from "classnames";
 
 const Logo: React.FunctionComponent = () => (
-  <img src={logoUrl} alt="PixieBrix logo" className={styles.logo} />
+  <img
+    src={logoUrl}
+    alt="PixieBrix logo"
+    className={cx(styles.logo, styles.square)}
+  />
 );
 
 export default Logo;

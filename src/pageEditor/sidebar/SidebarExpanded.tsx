@@ -202,29 +202,27 @@ const SidebarExpanded: React.FunctionComponent<{
     <div className={cx(styles.root, styles.expanded)}>
       <div className={styles.header}>
         <div className={styles.actions}>
-          <div className={styles.actionsLeft}>
-            <a
-              href="/options.html"
-              target="_blank"
-              title="Open PixieBrix Options"
-            >
-              <Logo />
-            </a>
+          <a
+            href="/options.html"
+            target="_blank"
+            title="Open PixieBrix Options"
+            className="d-flex" /* Have the icon always follow the link height */
+          >
+            <Logo />
+          </a>
 
-            <AddExtensionPointButton />
+          <AddExtensionPointButton />
 
-            {showDeveloperUI && <ReloadButton />}
-          </div>
+          {showDeveloperUI && <ReloadButton />}
           <Button
             variant="light"
-            className={styles.toggle}
+            className={cx(styles.toggle, styles.square, "ml-auto")}
             type="button"
             onClick={collapseSidebar}
           >
             <FontAwesomeIcon icon={faAngleDoubleLeft} />
           </Button>
         </div>
-
         {unavailableCount ? (
           <div className={styles.unavailable}>
             <Form.Check

@@ -1,6 +1,6 @@
 @import "@/themes/colors";
 
-$logoSize: 31px;
+$editorActionsBarHeight: 31px;
 
 .root {
   flex-direction: column;
@@ -11,7 +11,7 @@ $logoSize: 31px;
   background: white;
 
   &.collapsed {
-    flex: 0 0 $logoSize;
+    flex: 0 0 $editorActionsBarHeight;
     align-items: center;
   }
   &.expanded {
@@ -58,9 +58,9 @@ $logoSize: 31px;
 
 .logo {
   background-color: $P500;
-  width: $logoSize;
-  height: $logoSize;
+  object-fit: contain;
 
+  transition: filter 0.15s ease-in-out; // Matches .btn:hover transition
   :hover > & {
     filter: brightness(0.75);
   }
@@ -72,27 +72,29 @@ $logoSize: 31px;
 
 .actions {
   display: flex;
-  justify-content: space-between;
 
   button {
     border-radius: 0;
-    margin-right: 0;
-    margin-left: 0;
+    margin: 0;
   }
 
-  :global(.badge) {
-    margin-top: -5px;
+  & > :global(.dropdown) {
+    // Have the "Add" dropdown fit its container
+    display: flex;
   }
 }
 
-.actionsLeft {
-  display: flex;
+.square {
+  height: $editorActionsBarHeight;
+  width: $editorActionsBarHeight;
 }
 
 .toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   border: none !important;
-  border-radius: 0 !important;
-  width: $logoSize;
   padding: 0 !important;
 
   &:hover {

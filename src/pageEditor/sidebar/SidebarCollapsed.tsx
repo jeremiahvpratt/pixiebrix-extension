@@ -35,15 +35,15 @@ const SidebarCollapsed: React.VoidFunctionComponent<{
     flagOn("page-editor-developer");
 
   return (
-    <div className={cx(styles.root, styles.collapsed)}>
+    <div className={cx(styles.root, styles.collapsed, styles.actions)}>
       <Button
         variant="light"
-        className={styles.toggle}
+        className={cx(styles.toggle, "mb-auto")}
         type="button"
         onClick={expandSidebar}
       >
         <Logo />
-        <FontAwesomeIcon icon={faAngleDoubleRight} />
+        <FontAwesomeIcon icon={faAngleDoubleRight} className={styles.square} />
       </Button>
       {showDeveloperUI && <ReloadButton />}
     </div>
