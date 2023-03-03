@@ -31,6 +31,7 @@ import { type Me } from "@/types/contract";
 import { type AxiosError } from "axios";
 import useRequiredPartnerAuth from "@/auth/useRequiredPartnerAuth";
 import useLinkState from "@/auth/useLinkState";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 type RequireAuthProps = {
   /** Rendered in case of 401 response */
@@ -55,11 +56,9 @@ const useRequiredAuth = () => {
     error: meError,
     data: me,
     isSuccess: isMeSuccess,
-  } = useGetMeQuery(undefined, {
-    // Only call /api/me/ if the extension is "linked" is with an Authorization token. If not, the session id will
-    // be passed in the header which leads to inconsistent results depending on whether the session is still valid
-    skip: !hasToken,
-  });
+    isUninitialized,
+    isFetching,
+  } = useGetMeQuery(hasToken ? undefined : skipToken);
 
   useEffect(() => {
     // Before we get the first response from API, use the AuthRootState persisted with redux-persist.
@@ -104,6 +103,29 @@ const useRequiredAuth = () => {
     isBadToken ||
     (!hasCachedLoggedIn && !meLoading) ||
     (!hasToken && !tokenLoading);
+
+  console.log("hasCachedLoggedIn", hasCachedLoggedIn, meLoading);
+  console.warn(
+    "me",
+    me,
+    meLoading,
+    "uninitialized",
+    isUninitialized,
+    "fetching",
+    isFetching,
+    "success",
+    isMeSuccess,
+    "error",
+    meError
+  );
+  console.warn(
+    "hasToken",
+    hasToken,
+    "isLoading",
+    tokenLoading,
+    "error",
+    tokenError
+  );
 
   return {
     isAccountUnlinked,

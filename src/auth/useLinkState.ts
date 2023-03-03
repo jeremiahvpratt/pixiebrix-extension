@@ -45,6 +45,8 @@ function useLinkState(): LinkState {
     []
   );
 
+  console.log("hasToken", hasToken);
+
   useEffect(() => {
     // Listen for token invalidation
     const handler = async () => {
