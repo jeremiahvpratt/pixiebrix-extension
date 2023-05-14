@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const getMethod = jest.fn(() => jest.fn());
+export const getMethod = jest.fn(() => {
+  console.debug("Mocking getMethod");
+  return jest.fn();
+});
 export const getNotifier = jest.fn(() => jest.fn());
 
 export const getTopLevelFrame = async () => ({ tabId: 1, frameId: 0 });

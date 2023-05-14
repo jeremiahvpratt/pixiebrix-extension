@@ -19,7 +19,7 @@ import { type SanitizedAuth } from "@/types/contract";
 import { sortBy, isEmpty } from "lodash";
 import registry, { readRawConfigurations } from "@/services/registry";
 import { inputProperties } from "@/helpers";
-import { fetch } from "@/hooks/fetch";
+import { fetch } from "@/services/fetch";
 import { validateRegistryId } from "@/types/helpers";
 import { PIXIEBRIX_SERVICE_ID } from "@/services/constants";
 import { expectContext, forbidContext } from "@/utils/expectContext";

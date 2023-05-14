@@ -71,7 +71,9 @@ function normalizeRecipeOptions(
   return { schema, uiSchema };
 }
 
-function fromJS(rawRecipe: UnnormalizedRecipeDefinition) {
+function fromJS(
+  rawRecipe: UnnormalizedRecipeDefinition
+): RegistryRecipeDefinition {
   return produce(rawRecipe, (draft) => {
     draft.options = normalizeRecipeOptions(rawRecipe.options);
     (draft as RegistryRecipeDefinition).id = rawRecipe.metadata.id;

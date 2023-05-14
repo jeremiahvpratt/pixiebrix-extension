@@ -23,11 +23,12 @@ import crypto from "node:crypto";
 // Mock `window.location` with Jest spies and extend expect
 // https://github.com/evelynhathaway/jest-location-mock
 import "jest-location-mock";
-// eslint-disable-next-line import/no-unassigned-import -- mocking permissions API
-import "./permissionsMock";
 import * as apiClientMock from "./apiClientMock";
 import * as storePersistorMock from "./storePersistorMock";
 import * as detectPageMock from "./detectPageMock";
+import * as backgroundApiMock from "./backgroundApiMock";
+// eslint-disable-next-line import/no-unassigned-import -- mocking permissions API
+import "./permissionsMock";
 
 global.$ = $;
 global.jQuery = $;
@@ -48,6 +49,8 @@ globalThis.crypto = {
 
 jest.setMock("webext-dynamic-content-scripts/distribution/active-tab", {});
 
+// Custom mocks/fakes files
+jest.setMock("@/background/messenger/api", backgroundApiMock);
 jest.setMock("webext-detect-page", detectPageMock);
 jest.setMock("@/services/apiClient", apiClientMock);
 jest.setMock("@/store/optionsStore", storePersistorMock);

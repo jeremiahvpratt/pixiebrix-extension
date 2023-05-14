@@ -52,7 +52,7 @@ const RecipeOptionsValuesContent: React.FC = () => {
   const recipeId = useSelector(selectActiveRecipeId);
   const {
     data: recipe,
-    isFetching: isLoadingRecipe,
+    isLoading: isLoadingRecipe,
     error: recipeError,
   } = useOptionalRecipe(recipeId);
   const dirtyRecipeOptions = useSelector(

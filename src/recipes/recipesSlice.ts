@@ -133,7 +133,9 @@ export const recipesSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(revertAll, () => initialState);
+    builder.addCase(revertAll, () => {
+      return initialState;
+    });
   },
 });
 

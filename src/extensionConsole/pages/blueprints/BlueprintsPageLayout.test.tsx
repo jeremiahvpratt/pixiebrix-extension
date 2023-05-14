@@ -25,21 +25,16 @@ import blueprintsSlice from "@/extensionConsole/pages/blueprints/blueprintsSlice
 import userEvent from "@testing-library/user-event";
 import { authSlice } from "@/auth/authSlice";
 import { mockCachedUser, mockLoadingUser } from "@/testUtils/userMock";
-import { appApiMock, onDeferredGet } from "@/testUtils/appApiMock";
+import {
+  appApiMock,
+  mockAllApiEndpoints,
+  onDeferredGet,
+} from "@/testUtils/appApiMock";
 import {
   authStateFactory,
   userFactory,
   userOrganizationFactory,
 } from "@/testUtils/factories/authFactories";
-
-jest.mock("@/recipes/recipesHooks", () => ({
-  useAllRecipes: jest
-    .fn()
-    .mockReturnValue({ data: [], isFetchingFromCache: false }),
-  useOptionalRecipe: jest
-    .fn()
-    .mockReturnValue({ data: [], isFetchingFromCache: false }),
-}));
 
 const installables: Installable[] = [];
 
@@ -59,7 +54,9 @@ describe("BlueprintsPageLayout", () => {
     jest.useRealTimers();
   });
 
-  test("renders", async () => {
+  test("renders empty installables", async () => {
+    mockAllApiEndpoints();
+
     const rendered = render(
       <BlueprintsPageLayout installables={installables} />
     );
@@ -69,7 +66,6 @@ describe("BlueprintsPageLayout", () => {
 
   test("doesn't flash the 'Get Started' tab while loading", async () => {
     appApiMock.reset();
-
     const deferred = onDeferredGet("/api/onboarding/starter-blueprints/");
 
     render(<BlueprintsPageLayout installables={installables} />);

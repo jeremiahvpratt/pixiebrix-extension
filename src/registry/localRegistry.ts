@@ -18,7 +18,7 @@
 import { type DBSchema, type IDBPDatabase, openDB } from "idb/with-async-ittr";
 import { flatten, groupBy, sortBy } from "lodash";
 import { type RegistryPackage } from "@/types/contract";
-import { fetch } from "@/hooks/fetch";
+import { fetch } from "@/services/fetch";
 import { type Except } from "type-fest";
 import { memoizeUntilSettled } from "@/utils";
 import { deleteDatabase } from "@/utils/idbUtils";

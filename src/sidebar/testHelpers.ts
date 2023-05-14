@@ -27,6 +27,7 @@ import {
 } from "@/testUtils/testHelpers";
 import { appApi } from "@/services/api";
 import { recipesMiddleware } from "@/recipes/recipesListenerMiddleware";
+import { recipesSlice } from "@/recipes/recipesSlice";
 
 const configureStoreForTests = () =>
   configureStore({
@@ -35,6 +36,7 @@ const configureStoreForTests = () =>
       options: extensionsSlice.reducer,
       sidebar: sidebarSlice.reducer,
       settings: settingsSlice.reducer,
+      recipes: recipesSlice.reducer,
       services: servicesSlice.reducer,
       [appApi.reducerPath]: appApi.reducer,
     },

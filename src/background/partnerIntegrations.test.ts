@@ -20,7 +20,7 @@ import {
   getPartnerPrincipals,
 } from "@/background/partnerIntegrations";
 import { readRawConfigurations } from "@/services/registry";
-import { fetch } from "@/hooks/fetch";
+import { fetch } from "@/services/fetch";
 import controlRoomTokenService from "@contrib/services/automation-anywhere.yaml";
 import controlRoomOAuthService from "@contrib/services/automation-anywhere-oauth2.yaml";
 import { locator as serviceLocator } from "@/background/locator";

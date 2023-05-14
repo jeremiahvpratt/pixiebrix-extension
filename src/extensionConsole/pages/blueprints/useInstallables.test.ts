@@ -1,3 +1,4 @@
+/* eslint-disable new-cap -- test file */
 /*
  * Copyright (C) 2023 PixieBrix, Inc.
  *
@@ -18,32 +19,19 @@
 import { renderHook } from "@/extensionConsole/testHelpers";
 import useInstallables from "@/extensionConsole/pages/blueprints/useInstallables";
 import extensionsSlice from "@/store/extensionsSlice";
-import { validateTimestamp } from "@/types/helpers";
-import { useAllRecipes } from "@/recipes/recipesHooks";
-import { range } from "lodash";
-import { appApiMock } from "@/testUtils/appApiMock";
+import { appApiMock, mockAllApiEndpoints } from "@/testUtils/appApiMock";
 import {
   cloudExtensionFactory,
+  installedRecipeMetadataFactory,
   persistedExtensionFactory,
 } from "@/testUtils/factories/extensionFactories";
-import {
-  recipeDefinitionFactory,
-  recipeMetadataFactory,
-} from "@/testUtils/factories/recipeFactories";
-
-jest.mock("@/recipes/recipesHooks", () => ({
-  useAllRecipes: jest.fn(),
-}));
-
-const useAllRecipesMock = jest.mocked(useAllRecipes);
+import { recipeDefinitionFactory } from "@/testUtils/factories/recipeFactories";
+import { selectSourceRecipeMetadata } from "@/types/extensionTypes";
+import { array } from "cooky-cutter";
 
 describe("useInstallables", () => {
   beforeEach(() => {
-    appApiMock.reset();
-    appApiMock.onGet("/api/extensions/").reply(200, []);
-
-    useAllRecipesMock.mockReset();
-    useAllRecipesMock.mockReturnValue({ data: undefined } as any);
+    mockAllApiEndpoints();
   });
 
   it("handles empty state", async () => {
@@ -58,17 +46,14 @@ describe("useInstallables", () => {
   });
 
   it("handles unavailable", async () => {
+    const metadata = installedRecipeMetadataFactory();
+
     const wrapper = renderHook(() => useInstallables(), {
       setupRedux(dispatch) {
         dispatch(
-          // eslint-disable-next-line new-cap -- unsave
           extensionsSlice.actions.UNSAFE_setExtensions([
             persistedExtensionFactory({
-              _recipe: {
-                ...recipeMetadataFactory(),
-                updated_at: validateTimestamp(new Date().toISOString()),
-                sharing: { public: false, organizations: [] },
-              },
+              _recipe: metadata,
             }),
           ])
         );
@@ -88,22 +73,18 @@ describe("useInstallables", () => {
   });
 
   it("multiple unavailable are single installable", async () => {
-    const metadata = recipeMetadataFactory();
+    const metadata = installedRecipeMetadataFactory();
 
     const wrapper = renderHook(() => useInstallables(), {
       setupRedux(dispatch) {
         dispatch(
-          // eslint-disable-next-line new-cap -- unsave
           extensionsSlice.actions.UNSAFE_setExtensions(
-            range(3).map(() =>
-              persistedExtensionFactory({
-                _recipe: {
-                  ...metadata,
-                  updated_at: validateTimestamp(new Date().toISOString()),
-                  sharing: { public: false, organizations: [] },
-                },
-              })
-            )
+            array(
+              persistedExtensionFactory,
+              3
+            )({
+              _recipe: metadata,
+            })
           )
         );
       },
@@ -121,32 +102,32 @@ describe("useInstallables", () => {
     });
   });
 
-  it("handles known recipe", async () => {
-    const metadata = recipeMetadataFactory();
-
-    useAllRecipesMock.mockReturnValue({
-      data: [recipeDefinitionFactory({ metadata })],
-      error: undefined,
-    } as any);
+  it("handles known remote recipe", async () => {
+    const recipe = recipeDefinitionFactory();
+    appApiMock.reset();
+    appApiMock.onGet("/api/extensions/").reply(200, []);
+    appApiMock.onGet("/api/registry/bricks/").reply(200, [recipe]);
 
     const wrapper = renderHook(() => useInstallables(), {
       setupRedux(dispatch) {
         dispatch(
-          // eslint-disable-next-line new-cap -- test setup
           extensionsSlice.actions.UNSAFE_setExtensions([
             persistedExtensionFactory({
-              _recipe: {
-                ...metadata,
-                updated_at: validateTimestamp(new Date().toISOString()),
-                sharing: { public: false, organizations: [] },
-              },
+              _recipe: selectSourceRecipeMetadata(recipe),
             }),
           ])
         );
       },
     });
 
+    // On initial render, will be a stub
     await wrapper.waitForEffect();
+    expect(wrapper.result.current.installables[0]).toHaveProperty("isStub");
+
+    // Will be the real thing once the remote registry is fetched
+    await wrapper.waitForValueToChange(
+      () => (wrapper.result.current.installables[0] as any)?.isStub
+    );
 
     expect(wrapper.result.current).toEqual({
       installables: [
@@ -179,15 +160,14 @@ describe("useInstallables", () => {
   });
 
   it("handles active cloud extension", async () => {
-    appApiMock.reset();
-
     const cloudExtension = cloudExtensionFactory();
+    appApiMock.reset();
     appApiMock.onGet("/api/extensions/").reply(200, [cloudExtension]);
+    appApiMock.onGet("/api/registry/bricks/").reply(200, []);
 
     const wrapper = renderHook(() => useInstallables(), {
       setupRedux(dispatch) {
         dispatch(
-          // eslint-disable-next-line new-cap -- test setup
           extensionsSlice.actions.UNSAFE_setExtensions([
             // Content doesn't matter, just need to match the ID
             persistedExtensionFactory({ id: cloudExtension.id }),

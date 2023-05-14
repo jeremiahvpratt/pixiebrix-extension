@@ -17,7 +17,6 @@
 
 // This mock file provides reasonable defaults for the methods in the background messenger API
 
-/* Do not use `registerMethod` in this file */
 import {
   backgroundTarget as bg,
   getMethod,
@@ -26,8 +25,12 @@ import {
 import type { AxiosRequestConfig } from "axios";
 import type { RemoteResponse } from "@/types/contract";
 import { uuidv4 } from "@/types/helpers";
-import { SanitizedServiceConfiguration } from "@/types/serviceTypes";
-import { RegistryId } from "@/types/registryTypes";
+import { type SanitizedServiceConfiguration } from "@/types/serviceTypes";
+import * as apiClientMock from "@/testUtils/apiClientMock";
+
+// Must ensure apiClient mock because otherwise localRegistry refers to the actual @/background/messenger/api
+jest.setMock("@/services/apiClient", apiClientMock);
+const localRegistry = jest.requireActual("@/registry/localRegistry");
 
 // Chrome offers this API in more contexts than Firefox, so it skips the messenger entirely
 export const containsPermissions = jest
@@ -72,16 +75,12 @@ export const uninstallContextMenu = getMethod("UNINSTALL_CONTEXT_MENU", bg);
 export const ensureContextMenu = getMethod("ENSURE_CONTEXT_MENU", bg);
 export const openTab = getMethod("OPEN_TAB", bg);
 
+// Fake the registry by passing through directly to local registry, which uses fake-indexeddb as the backing store
 export const registry = {
-  fetch: jest.fn().mockResolvedValue(true),
-  syncRemote: getMethod("REGISTRY_SYNC", bg),
-  getByKinds: jest.fn().mockResolvedValue([]),
-  find: jest.fn().mockImplementation(async (id: RegistryId) => {
-    throw new Error(
-      `Find not implemented in registry mock (looking up "${id}"). See __mocks__/background/messenger/api for more information.`
-    );
-  }),
-  clear: getMethod("REGISTRY_CLEAR", bg),
+  syncRemote: localRegistry.syncPackages,
+  getByKinds: localRegistry.getByKinds,
+  find: localRegistry.find,
+  clear: localRegistry.clear,
 };
 
 export const dataStore = {

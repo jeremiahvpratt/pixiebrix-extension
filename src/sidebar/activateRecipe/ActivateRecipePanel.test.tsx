@@ -16,7 +16,6 @@
  */
 
 import React from "react";
-import { useRequiredRecipe } from "@/recipes/recipesHooks";
 import { render } from "@/sidebar/testHelpers";
 import ActivateRecipePanel from "@/sidebar/activateRecipe/ActivateRecipePanel";
 import sidebarSlice from "@/sidebar/sidebarSlice";
@@ -26,7 +25,6 @@ import registerDefaultWidgets from "@/components/fields/schemaFields/widgets/reg
 import useQuickbarShortcut from "@/hooks/useQuickbarShortcut";
 import { type RecipeDefinition } from "@/types/recipeTypes";
 import includesQuickBarExtensionPoint from "@/utils/includesQuickBarExtensionPoint";
-import { valueToAsyncCacheState } from "@/utils/asyncStateUtils";
 import { validateRegistryId } from "@/types/helpers";
 import { checkRecipePermissions } from "@/recipes/recipePermissionsHelpers";
 import { appApiMock, onDeferredGet } from "@/testUtils/appApiMock";
@@ -39,12 +37,9 @@ import {
   marketplaceListingFactory,
   recipeToMarketplacePackage,
 } from "@/testUtils/factories/marketplaceFactories";
+import { addToRegistry, setupRegistryRedux } from "@/testUtils/registryFake";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
-jest.mock("@/recipes/recipesHooks", () => ({
-  useRequiredRecipe: jest.fn(),
-}));
-
-const useRequiredRecipeMock = jest.mocked(useRequiredRecipe);
 const checkRecipePermissionsMock = jest.mocked(checkRecipePermissions);
 
 jest.mock("@/utils/includesQuickBarExtensionPoint", () => ({
@@ -83,7 +78,9 @@ function setupMocksAndRender(recipeOverride?: Partial<RecipeDefinition>) {
       name: "Test Mod",
     },
   });
-  useRequiredRecipeMock.mockReturnValue(valueToAsyncCacheState(recipe));
+
+  addToRegistry(recipe);
+
   const listing = marketplaceListingFactory({
     // Consistent user-visible name for snapshots
     package: recipeToMarketplacePackage(recipe),
@@ -98,11 +95,18 @@ function setupMocksAndRender(recipeOverride?: Partial<RecipeDefinition>) {
     heading: "Activate Mod",
   });
 
-  return render(<ActivateRecipePanel recipeId={recipe.metadata.id} />, {
-    setupRedux(dispatch) {
-      dispatch(sidebarSlice.actions.showActivateRecipe(entry));
-    },
-  });
+  return render(
+    <ErrorBoundary>
+      <ActivateRecipePanel recipeId={recipe.metadata.id} />
+    </ErrorBoundary>,
+    {
+      setupRedux(dispatch) {
+        setupRegistryRedux(dispatch);
+
+        dispatch(sidebarSlice.actions.showActivateRecipe(entry));
+      },
+    }
+  );
 }
 
 beforeEach(() => {

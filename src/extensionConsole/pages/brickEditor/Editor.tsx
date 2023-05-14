@@ -35,7 +35,7 @@ import { useAsyncState } from "@/hooks/common";
 import serviceRegistry from "@/services/registry";
 import blockRegistry from "@/blocks/registry";
 import extensionPointRegistry from "@/extensionPoints/registry";
-import { fetch } from "@/hooks/fetch";
+import { fetch } from "@/services/fetch";
 import { type EditablePackage } from "@/types/contract";
 import ConfirmNavigationModal from "@/components/ConfirmNavigationModal";
 import notify from "@/utils/notify";

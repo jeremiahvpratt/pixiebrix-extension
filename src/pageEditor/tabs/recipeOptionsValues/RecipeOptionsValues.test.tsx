@@ -22,43 +22,49 @@ import RecipeOptionsValues from "@/pageEditor/tabs/recipeOptionsValues/RecipeOpt
 import extensionsSlice from "@/store/extensionsSlice";
 import { waitForEffect } from "@/testUtils/testHelpers";
 import { screen } from "@testing-library/react";
-import { useAllRecipes, useOptionalRecipe } from "@/recipes/recipesHooks";
-import { type RecipeDefinition } from "@/types/recipeTypes";
 import databaseSchema from "@schemas/database.json";
 import googleSheetIdSchema from "@schemas/googleSheetId.json";
-import { valueToAsyncCacheState } from "@/utils/asyncStateUtils";
 import { recipeFactory } from "@/testUtils/factories/recipeFactories";
-
-jest.mock("@/recipes/recipesHooks", () => ({
-  useOptionalRecipe: jest.fn(),
-  useAllRecipes: jest.fn(),
-}));
-
-function mockRecipe(recipe: RecipeDefinition) {
-  (useAllRecipes as jest.Mock).mockReturnValue(
-    valueToAsyncCacheState([recipe])
-  );
-  (useOptionalRecipe as jest.Mock).mockReturnValue(
-    valueToAsyncCacheState(recipe)
-  );
-}
+import {
+  addToRegistry,
+  clearRegistryFake,
+  setupRegistryRedux,
+} from "@/testUtils/registryFake";
+import { appApiMock } from "@/testUtils/appApiMock";
+import { editorSlice } from "@/pageEditor/slices/editorSlice";
+import { type RecipeDefinition } from "@/types/recipeTypes";
 
 beforeEach(() => {
   registerDefaultWidgets();
+  clearRegistryFake();
+  appApiMock.reset();
 });
+
+function renderRecipe(recipe: RecipeDefinition) {
+  addToRegistry(recipe);
+
+  return render(<RecipeOptionsValues />, {
+    setupRedux(dispatch) {
+      setupRegistryRedux(dispatch);
+
+      dispatch(
+        extensionsSlice.actions.installRecipe({
+          recipe,
+          extensionPoints: recipe.extensionPoints,
+        })
+      );
+
+      dispatch(editorSlice.actions.selectRecipeId(recipe.metadata.id));
+    },
+  });
+}
 
 describe("ActivationOptions", () => {
   test("renders empty options", async () => {
     const recipe = recipeFactory();
-    mockRecipe(recipe);
-    const rendered = render(<RecipeOptionsValues />, {
-      setupRedux(dispatch) {
-        extensionsSlice.actions.installRecipe({
-          recipe,
-          extensionPoints: recipe.extensionPoints,
-        });
-      },
-    });
+
+    const rendered = renderRecipe(recipe);
+
     await waitForEffect();
     expect(rendered.asFragment()).toMatchSnapshot();
   });
@@ -107,15 +113,9 @@ describe("ActivationOptions", () => {
         },
       },
     });
-    mockRecipe(recipe);
-    const rendered = render(<RecipeOptionsValues />, {
-      setupRedux(dispatch) {
-        extensionsSlice.actions.installRecipe({
-          recipe,
-          extensionPoints: recipe.extensionPoints,
-        });
-      },
-    });
+
+    const rendered = renderRecipe(recipe);
+
     await waitForEffect();
     expect(rendered.asFragment()).toMatchSnapshot();
   });
@@ -131,15 +131,9 @@ describe("ActivationOptions", () => {
         },
       },
     });
-    mockRecipe(recipe);
-    const rendered = render(<RecipeOptionsValues />, {
-      setupRedux(dispatch) {
-        extensionsSlice.actions.installRecipe({
-          recipe,
-          extensionPoints: recipe.extensionPoints,
-        });
-      },
-    });
+
+    const rendered = renderRecipe(recipe);
+
     await waitForEffect();
     expect(rendered.asFragment()).toMatchSnapshot();
   });
@@ -169,15 +163,8 @@ describe("ActivationOptions", () => {
         },
       },
     });
-    mockRecipe(recipe);
-    render(<RecipeOptionsValues />, {
-      setupRedux(dispatch) {
-        extensionsSlice.actions.installRecipe({
-          recipe,
-          extensionPoints: recipe.extensionPoints,
-        });
-      },
-    });
+
+    renderRecipe(recipe);
 
     await waitForEffect();
 
@@ -203,15 +190,8 @@ describe("ActivationOptions", () => {
         },
       },
     });
-    mockRecipe(recipe);
-    render(<RecipeOptionsValues />, {
-      setupRedux(dispatch) {
-        extensionsSlice.actions.installRecipe({
-          recipe,
-          extensionPoints: recipe.extensionPoints,
-        });
-      },
-    });
+
+    renderRecipe(recipe);
 
     await waitForEffect();
 
