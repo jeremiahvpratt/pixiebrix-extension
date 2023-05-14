@@ -31,6 +31,7 @@ import { appApiMock, onDeferredGet } from "@/testUtils/appApiMock";
 import {
   getRecipeWithBuiltInServiceAuths,
   recipeDefinitionFactory,
+  recipeMetadataFactory,
 } from "@/testUtils/factories/recipeFactories";
 import { sidebarEntryFactory } from "@/testUtils/factories/sidebarEntryFactories";
 import {
@@ -73,10 +74,10 @@ beforeAll(() => {
 function setupMocksAndRender(recipeOverride?: Partial<RecipeDefinition>) {
   const recipe = recipeDefinitionFactory({
     ...recipeOverride,
-    metadata: {
+    metadata: recipeMetadataFactory({
       id: validateRegistryId("test-recipe"),
       name: "Test Mod",
-    },
+    }),
   });
 
   addToRegistry(recipe);
