@@ -37,6 +37,10 @@ import {
   type RecipeResponse,
   type RemoteIntegrationConfig,
   UserRole,
+  RecommendDocPanelRequest,
+  RecommendDocPanelResponse,
+  RecommendRegexResponse,
+  RecommendRegexRequest,
 } from "@/types/contract";
 import { type components } from "@/types/swagger";
 import { dumpBrickYaml } from "@/runtime/brickYaml";
@@ -466,6 +470,26 @@ export const appApi = createApi({
       }),
       invalidatesTags: ["Me"],
     }),
+    recommendDocPanel: builder.mutation<
+      RecommendDocPanelResponse,
+      RecommendDocPanelRequest
+    >({
+      query: (data) => ({
+        url: "/api/copilot/docpanel/",
+        method: "post",
+        data,
+      }),
+    }),
+    recommendRegex: builder.mutation<
+      RecommendRegexResponse,
+      RecommendRegexRequest
+    >({
+      query: (data) => ({
+        url: "/api/copilot/regex/",
+        method: "post",
+        data,
+      }),
+    }),
   }),
 });
 
@@ -497,5 +521,7 @@ export const {
   useUpdateScopeMutation,
   useGetStarterBlueprintsQuery,
   useCreateMilestoneMutation,
+  useRecommendDocPanelMutation,
+  useRecommendRegexMutation,
   util,
 } = appApi;

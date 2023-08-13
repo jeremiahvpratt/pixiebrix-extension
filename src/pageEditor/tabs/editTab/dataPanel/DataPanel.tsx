@@ -57,6 +57,7 @@ import useAsyncState from "@/hooks/useAsyncState";
 import { fallbackValue } from "@/utils/asyncStateUtils";
 import { contextAsPlainObject } from "@/runtime/extendModVariableContext";
 import { joinPathParts } from "@/utils/formUtils";
+import CopilotTab from "@/pageEditor/tabs/editTab/dataPanel/tabs/copilot/CopilotTab";
 
 /**
  * Exclude irrelevant top-level keys.
@@ -232,6 +233,9 @@ const DataPanel: React.FC = () => {
               <Nav.Link eventKey={DataPanelTabKey.Outline}>Outline</Nav.Link>
             </Nav.Item>
           )}
+          <Nav.Item className={dataPanelStyles.tabNav}>
+            <Nav.Link eventKey={DataPanelTabKey.Copilot}>Copilot</Nav.Link>
+          </Nav.Item>
         </Nav>
         <Tab.Content className={dataPanelStyles.tabContent}>
           <DataTab eventKey={DataPanelTabKey.Context} isTraceEmpty={!record}>
@@ -390,6 +394,10 @@ const DataPanel: React.FC = () => {
                 setActiveElement={setNodePreviewActiveElement}
               />
             </ErrorBoundary>
+          </DataTab>
+
+          <DataTab eventKey={DataPanelTabKey.Copilot}>
+            <CopilotTab />
           </DataTab>
         </Tab.Content>
       </div>

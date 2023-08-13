@@ -25,6 +25,7 @@ import { type BrickConfig } from "@/bricks/types";
 import { extractRegexLiteral } from "@/analysis/analysisVisitors/regexAnalysis";
 
 import { isNunjucksExpression } from "@/utils/expressionUtils";
+import { validateRegistryId } from "@/types/helpers";
 
 export function extractNamedCaptureGroups(pattern: string): string[] {
   // Create new regex on each analysis call to avoid state issues with test
@@ -34,13 +35,15 @@ export function extractNamedCaptureGroups(pattern: string): string[] {
 }
 
 export class RegexTransformer extends TransformerABC {
+  static readonly BRICK_ID = validateRegistryId("@pixiebrix/regex");
+
   override async isPure(): Promise<boolean> {
     return true;
   }
 
   constructor() {
     super(
-      "@pixiebrix/regex",
+      RegexTransformer.BRICK_ID,
       "Regex Extractor",
       "Extract data using a Regex (regular expression)",
       "faCode"

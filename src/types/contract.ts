@@ -292,3 +292,27 @@ export type PackageVersionUpdates = {
     name: RegistryId;
   }>;
 };
+
+export type RecommendDocPanelRequest = {
+  description: string;
+  max_tries: number;
+};
+
+export type RecommendDocPanelResponse = {
+  doc_panel: UnknownObject;
+  reason: string;
+};
+
+export type RecommendRegexRequest = {
+  pattern: string;
+  examples: Array<{
+    input: string;
+    output: string;
+  }>;
+  max_tries: number;
+};
+
+export type RecommendRegexResponse = {
+  regex: string;
+  reason: string;
+};

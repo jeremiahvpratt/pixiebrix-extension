@@ -24,4 +24,5 @@ export enum DataPanelTabKey {
   Output = "output",
   Preview = "preview",
   Outline = "outline",
+  Copilot = "copilot",
 }

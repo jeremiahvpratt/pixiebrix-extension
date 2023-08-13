@@ -43,6 +43,7 @@ export type RenderBody = (state: {
 export type RenderSubmit = (state: {
   isSubmitting: boolean;
   isValid: boolean;
+  handleSubmit: () => void;
   values: FormikValues;
 }) => ReactElement;
 
@@ -168,7 +169,7 @@ const Form: React.FC<FormProps> = ({
           {renderBody
             ? renderBody({ isValid, values, setFieldValue, isSubmitting })
             : children}
-          {renderSubmit({ isSubmitting, isValid, values })}
+          {renderSubmit({ isSubmitting, isValid, values, handleSubmit })}
         </BootstrapForm>
       )}
     </Formik>
