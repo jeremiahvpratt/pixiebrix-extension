@@ -140,3 +140,10 @@ module.exports = {
     },
   ],
 };
+
+if (process.env.ESLINT_NO_IMPORTS) {
+  const importRules = Object.keys(require("eslint-plugin-import").rules);
+  for (const ruleName of importRules) {
+    module.exports.rules[`import/${ruleName}`] = "off";
+  }
+}
