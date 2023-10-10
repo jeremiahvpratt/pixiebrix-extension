@@ -47,10 +47,11 @@ function makeTargetKey(target: Target): string {
 /**
  * Runtime message handler to handle ENSURE_CONTENT_SCRIPT_READY messages sent from the contentScript
  */
+// eslint-disable-next-line @typescript-eslint/promise-function-async -- Message handlers must return undefined to "pass through", not Promise<undefined>
 function onContentScriptReadyMessage(
   message: unknown,
   sender: Runtime.MessageSender
-): null | undefined {
+): Promise<void> | undefined {
   if (
     isRemoteProcedureCallRequest(message) &&
     message.type === ENSURE_CONTENT_SCRIPT_READY &&
@@ -66,8 +67,8 @@ function onContentScriptReadyMessage(
       targetReadyPromiseMap.delete(key);
     }
 
-    // Don't value to indicate we handled the message
-    return null;
+    // Indicate we handled the message
+    return Promise.resolve();
   }
 
   // Don't return anything to indicate this didn't handle the message
@@ -122,7 +123,6 @@ export const ensureContentScript = memoizeUntilSettled(
       await pTimeout(ensureContentScriptWithoutTimeout(target, signal), {
         signal,
         milliseconds: timeoutMillis,
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions -- known to be a number
         message: `contentScript not ready in ${timeoutMillis}ms`,
       });
 
