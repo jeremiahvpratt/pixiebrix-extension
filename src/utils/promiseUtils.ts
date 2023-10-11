@@ -19,6 +19,7 @@ import { isEmpty, negate, type ObjectIterator, unary, zip } from "lodash";
 import pMemoize from "p-memoize";
 import { TimeoutError } from "p-timeout";
 import { sleep } from "@/utils/timeUtils";
+import { type RequireAtLeastOne } from "type-fest";
 
 /**
  * A promise that never resolves.
@@ -188,7 +189,7 @@ export async function resolveObj<T>(
 
 export function groupPromisesByStatus<T>(
   results: Array<PromiseSettledResult<T>>
-) {
+): { fulfilled: T[]; rejected: unknown[] } {
   const rejected = results
     .filter(
       (result): result is PromiseRejectedResult => result.status === "rejected"
@@ -200,6 +201,40 @@ export function groupPromisesByStatus<T>(
         result.status === "fulfilled"
     )
     .map(({ value }) => value);
+
+  return { fulfilled, rejected };
+}
+
+type RejectionCallback = RequireAtLeastOne<{
+  onRejected: "ignore" | ((reason: unknown) => void);
+  onRejectedAll: (reasons: unknown[]) => void;
+}>;
+
+function isPromiseSettledResults<T>(
+  promises: Array<Promise<unknown>> | Array<PromiseSettledResult<T>>
+): promises is Array<PromiseSettledResult<T>> {
+  return "status" in promises[0];
+}
+
+/** This function exists to enforce the handling of rejections or to "ignore" them explicitly */
+export async function allSettled<T>(
+  /** Either an array of promises or an array pre-settled promise results */
+  promises: Array<Promise<T>> | Array<PromiseSettledResult<T>>,
+  { onRejected, onRejectedAll }: RejectionCallback
+): Promise<{ fulfilled: T[]; rejected: unknown[] }> {
+  const results = isPromiseSettledResults(promises)
+    ? promises
+    : await Promise.allSettled(promises);
+  const { fulfilled, rejected } = groupPromisesByStatus(results);
+  if (typeof onRejected === "function") {
+    for (const reason of rejected) {
+      onRejected(reason);
+    }
+  }
+
+  if (onRejectedAll) {
+    onRejectedAll(rejected);
+  }
 
   return { fulfilled, rejected };
 }

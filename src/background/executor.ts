@@ -30,7 +30,7 @@ import type { RunBrick } from "@/contentScript/messenger/runBrickTypes";
 import { BusinessError } from "@/errors/businessErrors";
 import { canAccessTab } from "@/permissions/permissionsUtils";
 import { SessionMap } from "@/mv3/SessionStorage";
-import { groupPromisesByStatus } from "@/utils/promiseUtils";
+import { allSettled, groupPromisesByStatus } from "@/utils/promiseUtils";
 import { TOP_LEVEL_FRAME_ID } from "@/domConstants";
 import { forEachTab } from "@/utils/extensionUtils";
 
@@ -170,13 +170,13 @@ export async function requestRunInOtherTabs(
     }
   );
 
-  const { rejected, fulfilled } = groupPromisesByStatus(results);
-
-  if (rejected.length > 0) {
-    console.warn(`Broadcast rejected for ${rejected.length} tabs`, {
-      rejected,
-    });
-  }
+  const { fulfilled } = await allSettled(results, {
+    onRejectedAll(reasons) {
+      console.warn(`Broadcast rejected for ${reasons.length} tabs`, {
+        reasons,
+      });
+    },
+  });
 
   return fulfilled;
 }
@@ -192,19 +192,17 @@ export async function requestRunInAllFrames(
     tabId: sourceTabId,
   });
 
-  const results = await Promise.allSettled(
-    frames.map(async ({ frameId }) =>
-      safelyRunBrick({ tabId: sourceTabId, frameId }, subRequest)
-    )
+  const promises = frames.map(async ({ frameId }) =>
+    safelyRunBrick({ tabId: sourceTabId, frameId }, subRequest)
   );
 
-  const { rejected, fulfilled } = groupPromisesByStatus(results);
-
-  if (rejected.length > 0) {
-    console.warn(`Broadcast rejected for ${rejected.length} frame`, {
-      rejected,
-    });
-  }
+  const { fulfilled } = await allSettled(promises, {
+    onRejectedAll(reasons) {
+      console.warn(`Broadcast rejected for ${reasons.length} tabs`, {
+        reasons,
+      });
+    },
+  });
 
   return fulfilled;
 }
