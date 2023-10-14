@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { type Config, define, extend } from "cooky-cutter";
+import { type Config, define, extend, type ExtendConfig } from "cooky-cutter";
 import {
   type ModComponentBase,
   type ActivatedModComponent,
@@ -94,9 +94,8 @@ export const activatedModComponentFactory = extend<
 >(modComponentFactory, {
   createTimestamp: timestampFactory,
   updateTimestamp: timestampFactory,
-  _unresolvedModComponentBrand: undefined,
   active: true,
-});
+} as unknown as ExtendConfig<ModComponentBase, ActivatedModComponent>);
 
 // StandaloneModDefinition is a type in contract.ts. But it's really defined based on the ModComponentBase type not the backend API.
 export const standaloneModDefinitionFactory = (

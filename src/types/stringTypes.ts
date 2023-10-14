@@ -15,37 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { type Tagged } from "type-fest";
+
 /**
  * A known UUID v4 string
  * @see uuidv4
  * @see isUUID
  */
-export type UUID = string & {
-  // Nominal subtyping
-  _uuidBrand: never;
-};
+export type UUID = Tagged<string, "UUID">;
 
 /**
  * An ISO timestamp string
  */
-export type Timestamp = string & {
-  // Nominal subtyping
-  _uuidTimestamp: never;
-};
+export type Timestamp = Tagged<string, "Timestamp">;
 
 /**
  * A string known not to be tainted with user-generated input.
  */
-export type SafeString = string & {
-  // Nominal subtyping
-  _safeStringBrand: never;
-};
+export type SafeString = Tagged<string, "SafeString">;
 
 /**
  * Rendered HTML that has been sanitized.
  * @see sanitize
  */
-export type SafeHTML = string & {
-  // Nominal subtyping
-  _safeHTMLBrand: never;
-};
+export type SafeHTML = Tagged<string, "SafeHTML">;

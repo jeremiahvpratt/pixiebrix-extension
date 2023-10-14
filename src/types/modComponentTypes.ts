@@ -16,7 +16,7 @@
  */
 
 import { type Permissions } from "webextension-polyfill";
-import { type Except } from "type-fest";
+import { type Tagged, type Except } from "type-fest";
 import {
   type InnerDefinitionRef,
   type InnerDefinitions,
@@ -187,15 +187,11 @@ export type ModComponentBase<Config extends UnknownObject = UnknownObject> =
 
 export type UnresolvedModComponentV1<
   Config extends UnknownObject = UnknownObject
-> = ModComponentBaseV1<Config> & {
-  _unresolvedModComponentBrand: never;
-};
+> = Tagged<ModComponentBaseV1<Config>, "UnresolvedModComponent">;
 
 export type UnresolvedModComponentV2<
   Config extends UnknownObject = UnknownObject
-> = ModComponentBaseV2<Config> & {
-  _unresolvedModComponentBrand: never;
-};
+> = Tagged<ModComponentBaseV2<Config>, "UnresolvedModComponent">;
 
 /**
  * An ModComponentBase that is known not to have had its definitions resolved.
@@ -208,9 +204,7 @@ export type UnresolvedModComponentV2<
  */
 export type UnresolvedModComponent<
   Config extends UnknownObject = UnknownObject
-> = ModComponentBase<Config> & {
-  _unresolvedModComponentBrand: never;
-};
+> = Tagged<ModComponentBase<Config>, "UnresolvedModComponent">;
 
 type ActivatedModComponentBase = {
   /**

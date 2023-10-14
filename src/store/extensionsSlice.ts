@@ -28,7 +28,6 @@ import { uuidv4 } from "@/types/helpers";
 import { cloneDeep, partition } from "lodash";
 import { saveUserExtension } from "@/services/apiClient";
 import reportError from "@/telemetry/reportError";
-import { type Except } from "type-fest";
 import { assertModComponentNotResolved } from "@/runtime/runtimeUtils";
 import { revertAll } from "@/store/commonActions";
 import {
@@ -49,6 +48,7 @@ import {
   pickModDefinitionMetadata,
 } from "@/utils/modDefinitionUtils";
 import { initialState } from "@/store/extensionsSliceInitialState";
+import { type UnwrapTagged } from "type-fest";
 
 type ActivateModComponentParam = {
   modComponentDefinition: ModComponentDefinition;
@@ -305,10 +305,7 @@ const extensionsSlice = createSlice({
         throw new Error("extensionPointId is required");
       }
 
-      const extension: Except<
-        ActivatedModComponent,
-        "_unresolvedModComponentBrand"
-      > = {
+      const extension: UnwrapTagged<ActivatedModComponent> = {
         id,
         apiVersion,
         extensionPointId,

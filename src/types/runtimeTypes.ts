@@ -19,7 +19,7 @@ import { type ComponentType } from "react";
 import { type UnknownObject } from "@/types/objectTypes";
 import { type SafeHTML, type UUID } from "@/types/stringTypes";
 import { type SanitizedIntegrationConfig } from "@/types/integrationTypes";
-import { type Primitive } from "type-fest";
+import { type Tagged, type Primitive } from "type-fest";
 import { type Logger } from "@/types/loggerTypes";
 import { type BrickPipeline } from "@/bricks/types";
 
@@ -64,16 +64,12 @@ export type RendererOutput = SafeHTML | ComponentRef;
 /**
  * A valid identifier for a brick output key or a service key. (Does not include the preceding "@".)
  */
-export type OutputKey = string & {
-  _outputKeyBrand: never;
-};
+export type OutputKey = Tagged<string, "OutputKey">;
 
 /**
  * A variable with a "@"-prefix that refers to a service
  */
-export type ServiceVarRef = string & {
-  _serviceVarRefBrand: never;
-};
+export type ServiceVarRef = Tagged<string, "ServiceVarRef">;
 
 /**
  * A text template engine.
@@ -200,12 +196,14 @@ export type OptionsArgs = Record<string, Primitive>;
  * @see RenderedArgs
  * @see BrickConfig.outputKey
  */
-export type BrickArgsContext = UnknownObject & {
-  // Nominal typing
-  _blockArgsContextBrand: never;
-  "@input": UnknownObject;
-  "@options"?: OptionsArgs;
-};
+export type BrickArgsContext = Tagged<
+  {
+    [x: string]: unknown;
+    "@input": UnknownObject;
+    "@options"?: OptionsArgs;
+  },
+  "BrickArgsContext"
+>;
 
 /**
  * Returns an object as a BrickArgsContext, or throw a TypeError if it's not a valid context.

@@ -45,6 +45,7 @@ import {
   deploymentPackageFactory,
 } from "@/testUtils/factories/deploymentFactories";
 import { getIntegrationIds } from "@/utils/modDefinitionUtils";
+import { type JSONSchema7 } from "json-schema";
 
 describe("makeUpdatedFilter", () => {
   test.each([[{ restricted: true }, { restricted: false }]])(
@@ -482,9 +483,8 @@ describe("mergeDeploymentIntegrationDependencies", () => {
           extensionPoints: [
             modComponentDefinitionFactory({
               services: {
-                // @ts-expect-error - this is a placeholder
                 pixiebrix: PIXIEBRIX_INTEGRATION_ID,
-              },
+              } as JSONSchema7,
             }),
           ],
         }),

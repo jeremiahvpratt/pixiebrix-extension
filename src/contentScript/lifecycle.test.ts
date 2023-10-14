@@ -17,7 +17,7 @@
  */
 
 import { type UnknownObject } from "@/types/objectTypes";
-import { define } from "cooky-cutter";
+import { type Config, define } from "cooky-cutter";
 import { type StarterBrickConfig } from "@/starterBricks/types";
 import {
   fromJS,
@@ -76,11 +76,10 @@ const activatedModComponentFactory = define<
   config: define<TriggerConfig>({
     action: () => [] as BrickPipeline,
   }),
-  _unresolvedModComponentBrand: null,
   createTimestamp: new Date().toISOString(),
   updateTimestamp: new Date().toISOString(),
   active: true,
-});
+} as Config<ActivatedModComponent<TriggerConfig>>);
 
 describe("lifecycle", () => {
   beforeEach(() => {

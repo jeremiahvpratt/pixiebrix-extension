@@ -19,14 +19,12 @@ import { type BrickIcon } from "@/types/iconTypes";
 import { type UUID } from "@/types/stringTypes";
 import { type ApiVersion } from "@/types/runtimeTypes";
 import { type UnknownObject } from "@/types/objectTypes";
+import { type Tagged } from "type-fest";
 
 /**
  * A brick registry id conforming to `@scope/collection/name`
  */
-export type RegistryId = string & {
-  // Nominal subtyping
-  _registryIdBrand: never;
-};
+export type RegistryId = Tagged<string, "RegistryId">;
 
 /**
  * Scope for inner definitions
@@ -46,9 +44,7 @@ export type Kind =
 /**
  * Simple semantic version number, major.minor.patch
  */
-export type SemVerString = string & {
-  _semVerBrand: never;
-};
+export type SemVerString = Tagged<string, "SemVerString">;
 
 /**
  * Metadata about a Brick, StarterBrick, Integration, or Mod.
@@ -115,7 +111,4 @@ export type InnerDefinitions = Record<string, UnknownObject>;
  * A reference to an entry in the recipe's `definitions` map. _Not a valid RegistryId_.
  * @see InnerDefinitions
  */
-export type InnerDefinitionRef = string & {
-  // Nominal subtyping
-  _innerDefinitionRefBrand: never;
-};
+export type InnerDefinitionRef = Tagged<string, "InnerDefinitionRef">;
