@@ -20,7 +20,12 @@ import { type OutputKey } from "@/types/runtimeTypes";
 import { type UUID } from "@/types/stringTypes";
 import { type Schema, type UiSchema } from "@/types/schemaTypes";
 import { type BrickIcon } from "@/types/iconTypes";
-import { type Except, type JsonObject, type JsonValue } from "type-fest";
+import {
+  type Tagged,
+  type Except,
+  type JsonObject,
+  type JsonValue,
+} from "type-fest";
 import { type Metadata, type RegistryId } from "@/types/registryTypes";
 
 /**
@@ -97,10 +102,6 @@ export type IntegrationDependencyV2 = Except<
  */
 export type IntegrationDependency = IntegrationDependencyV2;
 
-type SanitizedBrand = { _sanitizedConfigBrand: null };
-
-type SecretBrand = { _integrationConfigBrand: null };
-
 /**
  * A one-level deep integration config that might have already been sanitized.
  */
@@ -110,13 +111,13 @@ export type IntegrationConfigArgs = Record<string, string | null>;
  * Nominal typing to distinguish from `IntegrationConfig`
  * @see SecretsConfig
  */
-export type SanitizedConfig = IntegrationConfigArgs & SanitizedBrand;
+export type SanitizedConfig = Tagged<IntegrationConfigArgs, "sanitized">;
 
 /**
  * Nominal typing to distinguish from `SanitizedConfig`
  * @see SanitizedConfig
  */
-export type SecretsConfig = IntegrationConfigArgs & SecretBrand;
+export type SecretsConfig = Tagged<IntegrationConfigArgs, "secret">;
 
 /**
  * Data received from the 3rd-party integration during an OAuth or token-exchange flow.
@@ -291,8 +292,8 @@ export type OAuth2Context = {
  */
 export interface Integration<
   TConfig extends IntegrationConfigArgs = IntegrationConfigArgs,
-  TSanitized = TConfig & { _sanitizedConfigBrand: null },
-  TSecret = TConfig & { _integrationConfigBrand: null },
+  TSanitized = Tagged<TConfig, "sanitized">,
+  TSecret = Tagged<TConfig, "secret">,
   TOAuth extends AuthData = AuthData
 > extends Metadata {
   schema: Schema;
@@ -365,18 +366,20 @@ export abstract class IntegrationABC<
     // No body necessary https://www.typescriptlang.org/docs/handbook/2/classes.html#parameter-properties
   }
 
-  abstract getOrigins(integrationConfig: TConfig & SanitizedBrand): string[];
+  abstract getOrigins(
+    integrationConfig: Tagged<TConfig, "sanitized">
+  ): string[];
 
   abstract getOAuth2Context(
-    integrationConfig: TConfig & SecretBrand
+    integrationConfig: Tagged<TConfig, "secret">
   ): OAuth2Context;
 
   abstract getTokenContext(
-    integrationConfig: TConfig & SecretBrand
+    integrationConfig: Tagged<TConfig, "secret">
   ): TokenContext;
 
   abstract authenticateRequest(
-    integrationConfig: TConfig & SecretBrand,
+    integrationConfig: Tagged<TConfig, "secret">,
     requestConfig: AxiosRequestConfig,
     authConfig?: TOAuth
   ): AxiosRequestConfig;

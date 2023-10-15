@@ -46,6 +46,7 @@ import registerDefaultWidgets from "@/components/fields/schemaFields/widgets/reg
 import IntegrationsSliceModIntegrationsContextAdapter from "@/store/integrations/IntegrationsSliceModIntegrationsContextAdapter";
 import selectEvent from "react-select-event";
 import useFlags from "@/hooks/useFlags";
+import { type SanitizedConfig } from "@/types/integrationTypes.js";
 
 jest.mock("@/contrib/google/sheets/ui/useGoogleSpreadsheetPicker", () => ({
   __esModule: true,
@@ -90,9 +91,8 @@ const servicesLookup = {
   [GOOGLE_SHEET_SERVICE_ID]: sanitizedIntegrationConfigFactory({
     serviceId: GOOGLE_SHEET_SERVICE_ID,
     config: {
-      _sanitizedConfigBrand: null,
       spreadsheetId: TEST_SPREADSHEET_ID,
-    },
+    } as unknown as SanitizedConfig,
   }),
   [GOOGLE_PKCE_SERVICE_ID]: sanitizedIntegrationConfigFactory({
     serviceId: GOOGLE_PKCE_SERVICE_ID,

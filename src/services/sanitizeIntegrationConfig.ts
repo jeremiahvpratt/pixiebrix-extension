@@ -32,7 +32,7 @@ export function sanitizeIntegrationConfig(
   service: Integration,
   config: IntegrationConfigArgs
 ): SanitizedConfig {
-  const result: SanitizedConfig = {} as SanitizedConfig;
+  const result = {} as SanitizedConfig;
   for (const [key, type] of Object.entries(inputProperties(service.schema))) {
     if (typeof type !== "boolean" && !REF_SECRETS.includes(type.$ref)) {
       // Safe because we're getting from Object.entries
