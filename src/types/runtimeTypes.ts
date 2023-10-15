@@ -19,7 +19,8 @@ import { type ComponentType } from "react";
 import { type UnknownObject } from "@/types/objectTypes";
 import { type SafeHTML, type UUID } from "@/types/stringTypes";
 import { type SanitizedIntegrationConfig } from "@/types/integrationTypes";
-import { type Tagged, type Primitive } from "type-fest";
+import { type Primitive } from "type-fest";
+import { type Nominal } from "@/utils/typeUtils";
 import { type Logger } from "@/types/loggerTypes";
 import { type BrickPipeline } from "@/bricks/types";
 
@@ -64,12 +65,12 @@ export type RendererOutput = SafeHTML | ComponentRef;
 /**
  * A valid identifier for a brick output key or a service key. (Does not include the preceding "@".)
  */
-export type OutputKey = Tagged<string, "OutputKey">;
+export type OutputKey = Nominal<string, "OutputKey">;
 
 /**
  * A variable with a "@"-prefix that refers to a service
  */
-export type ServiceVarRef = Tagged<string, "ServiceVarRef">;
+export type ServiceVarRef = Nominal<string, "ServiceVarRef">;
 
 /**
  * A text template engine.
@@ -196,7 +197,7 @@ export type OptionsArgs = Record<string, Primitive>;
  * @see RenderedArgs
  * @see BrickConfig.outputKey
  */
-export type BrickArgsContext = Tagged<
+export type BrickArgsContext = Nominal<
   {
     [x: string]: unknown;
     "@input": UnknownObject;

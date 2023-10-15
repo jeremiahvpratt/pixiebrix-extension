@@ -49,7 +49,7 @@ import {
 import { type FormikValues } from "formik";
 import IntegrationsSliceModIntegrationsContextAdapter from "@/store/integrations/IntegrationsSliceModIntegrationsContextAdapter";
 import useFlags from "@/hooks/useFlags";
-import { type SanitizedConfig } from "@/types/integrationTypes.js";
+import { type SanitizedConfig } from "@/types/integrationTypes";
 
 let idSequence = 0;
 function newId(): UUID {

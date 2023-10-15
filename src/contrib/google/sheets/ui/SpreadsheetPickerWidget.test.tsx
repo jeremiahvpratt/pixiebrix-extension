@@ -46,7 +46,7 @@ import registerDefaultWidgets from "@/components/fields/schemaFields/widgets/reg
 import IntegrationsSliceModIntegrationsContextAdapter from "@/store/integrations/IntegrationsSliceModIntegrationsContextAdapter";
 import selectEvent from "react-select-event";
 import useFlags from "@/hooks/useFlags";
-import { type SanitizedConfig } from "@/types/integrationTypes.js";
+import { type SanitizedConfig } from "@/types/integrationTypes";
 
 jest.mock("@/contrib/google/sheets/ui/useGoogleSpreadsheetPicker", () => ({
   __esModule: true,

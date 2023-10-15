@@ -20,12 +20,8 @@ import { type OutputKey } from "@/types/runtimeTypes";
 import { type UUID } from "@/types/stringTypes";
 import { type Schema, type UiSchema } from "@/types/schemaTypes";
 import { type BrickIcon } from "@/types/iconTypes";
-import {
-  type Tagged,
-  type Except,
-  type JsonObject,
-  type JsonValue,
-} from "type-fest";
+import { type Except, type JsonObject, type JsonValue } from "type-fest";
+import { type Nominal } from "@/utils/typeUtils";
 import { type Metadata, type RegistryId } from "@/types/registryTypes";
 
 /**
@@ -111,13 +107,13 @@ export type IntegrationConfigArgs = Record<string, string | null>;
  * Nominal typing to distinguish from `IntegrationConfig`
  * @see SecretsConfig
  */
-export type SanitizedConfig = Tagged<IntegrationConfigArgs, "sanitized">;
+export type SanitizedConfig = Nominal<IntegrationConfigArgs, "sanitized">;
 
 /**
  * Nominal typing to distinguish from `SanitizedConfig`
  * @see SanitizedConfig
  */
-export type SecretsConfig = Tagged<IntegrationConfigArgs, "secret">;
+export type SecretsConfig = Nominal<IntegrationConfigArgs, "secret">;
 
 /**
  * Data received from the 3rd-party integration during an OAuth or token-exchange flow.
@@ -292,8 +288,8 @@ export type OAuth2Context = {
  */
 export interface Integration<
   TConfig extends IntegrationConfigArgs = IntegrationConfigArgs,
-  TSanitized = Tagged<TConfig, "sanitized">,
-  TSecret = Tagged<TConfig, "secret">,
+  TSanitized = Nominal<TConfig, "sanitized">,
+  TSecret = Nominal<TConfig, "secret">,
   TOAuth extends AuthData = AuthData
 > extends Metadata {
   schema: Schema;
@@ -367,19 +363,19 @@ export abstract class IntegrationABC<
   }
 
   abstract getOrigins(
-    integrationConfig: Tagged<TConfig, "sanitized">
+    integrationConfig: Nominal<TConfig, "sanitized">
   ): string[];
 
   abstract getOAuth2Context(
-    integrationConfig: Tagged<TConfig, "secret">
+    integrationConfig: Nominal<TConfig, "secret">
   ): OAuth2Context;
 
   abstract getTokenContext(
-    integrationConfig: Tagged<TConfig, "secret">
+    integrationConfig: Nominal<TConfig, "secret">
   ): TokenContext;
 
   abstract authenticateRequest(
-    integrationConfig: Tagged<TConfig, "secret">,
+    integrationConfig: Nominal<TConfig, "secret">,
     requestConfig: AxiosRequestConfig,
     authConfig?: TOAuth
   ): AxiosRequestConfig;

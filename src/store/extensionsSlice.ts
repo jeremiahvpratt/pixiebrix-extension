@@ -48,7 +48,7 @@ import {
   pickModDefinitionMetadata,
 } from "@/utils/modDefinitionUtils";
 import { initialState } from "@/store/extensionsSliceInitialState";
-import { type UnwrapTagged } from "type-fest";
+import { type UnwrapNominal } from "@/utils/typeUtils";
 
 type ActivateModComponentParam = {
   modComponentDefinition: ModComponentDefinition;
@@ -305,7 +305,7 @@ const extensionsSlice = createSlice({
         throw new Error("extensionPointId is required");
       }
 
-      const extension: UnwrapTagged<ActivatedModComponent> = {
+      const extension: UnwrapNominal<ActivatedModComponent> = {
         id,
         apiVersion,
         extensionPointId,

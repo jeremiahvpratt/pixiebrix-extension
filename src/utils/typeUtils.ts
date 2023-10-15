@@ -17,6 +17,12 @@
 
 import { type Primitive } from "type-fest";
 
+// Rename for clarity
+export {
+  type Opaque as Nominal,
+  type UnwrapOpaque as UnwrapNominal,
+} from "type-fest";
+
 /**
  * Returns true if the value is a JS primitive. `null` is considered a primitive.
  * @param value the value to test

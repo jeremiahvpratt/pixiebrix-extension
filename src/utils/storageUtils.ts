@@ -22,19 +22,20 @@ import {
 } from "redux-persist/es/types";
 import migratePersistedState from "@/store/migratePersistedState";
 import { mapValues } from "lodash";
-import { type Tagged, type SetOptional } from "type-fest";
+import { type SetOptional } from "type-fest";
+import { type Nominal } from "@/utils/typeUtils";
 
 /**
  * A storage key managed manually (i.e., not using redux-persist).
  * @see ReduxStorageKey
  */
-export type ManualStorageKey = Tagged<string, "ManualStorageKey">;
+export type ManualStorageKey = Nominal<string, "ManualStorageKey">;
 
 /**
  * A storage key managed by redux-persist. Should begin with the `persist:` prefix
  * @see ManualStorageKey
  */
-export type ReduxStorageKey = Tagged<string, "ReduxStorageKey">;
+export type ReduxStorageKey = Nominal<string, "ReduxStorageKey">;
 
 export function validateReduxStorageKey(key: string): ReduxStorageKey {
   if (!key.startsWith("persist:")) {
