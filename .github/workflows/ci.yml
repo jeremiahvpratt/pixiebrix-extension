@@ -17,7 +17,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: npm
       - run: npm ci
-      - run: npm run test -- --coverage --detectOpenHandles
+      - run: npm run test -- --coverage --detectOpenHandles --forceExit
       - uses: actions/upload-artifact@v3
         with:
           name: extension-test-coverage
