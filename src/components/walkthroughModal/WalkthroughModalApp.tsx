@@ -16,7 +16,7 @@
  */
 
 import { Carousel, Modal } from "react-bootstrap";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { expectContext } from "@/utils/expectContext";
 import bootstrap from "bootstrap/dist/css/bootstrap.min.css?loadAsUrl";
 import { Stylesheets } from "@/components/Stylesheets";
@@ -26,38 +26,63 @@ const PAGE_EDITOR_WALKTHROUGH_MODAL_CONTAINER_ID =
   "page-editor-walkthrough-modal";
 
 export const WalkthroughModalApp: React.FunctionComponent = () => {
+  const [index, setIndex] = useState(0);
+  const [show, setShow] = useState(true);
+  const handleClose = () => setShow(false);
+
   const ref = useRef(null);
+
+  const carouselItem = (body) => (
+    <Carousel.Item>
+      <Modal.Header closeButton>Step {index + 1} of 3</Modal.Header>
+      <Modal.Body>{body}</Modal.Body>
+      <Modal.Footer>
+        <button
+          onClick={() => {
+            setIndex(index - 1);
+          }}
+        >
+          Prev
+        </button>
+        <button
+          onClick={() => {
+            setIndex(index + 1);
+          }}
+        >
+          Next
+        </button>
+      </Modal.Footer>
+    </Carousel.Item>
+  );
+
   return (
     <Stylesheets href={[bootstrap]}>
       <Modal
-        show={true}
+        show={show}
+        onHide={handleClose}
         container={document
           .querySelector("#page-editor-walkthrough-modal")
           .shadowRoot.querySelector("#WUMBO")}
       >
-        <Modal.Body>
-          <Carousel slide={false} controls={false} ref={ref}>
-            <Carousel.Item>step 1</Carousel.Item>
-            <Carousel.Item>step 2</Carousel.Item>
-            <Carousel.Item>step 3</Carousel.Item>
-          </Carousel>
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            onClick={() => {
-              ref.current.prev();
-            }}
-          >
-            Prev
-          </button>
-          <button
-            onClick={() => {
-              ref.current.next();
-            }}
-          >
-            Next
-          </button>
-        </Modal.Footer>
+        <Carousel
+          activeIndex={index}
+          slide={false}
+          controls={false}
+          interval={null}
+          ref={ref}
+        >
+          {carouselItem(
+            <>
+              <h3>Opening the Chrome Dev Tools</h3>
+              <p>
+                The Page Editor lives in the Chrome Dev tools. So the first step
+                is to open them. You can open it in two different ways.
+              </p>
+            </>
+          )}
+          {carouselItem(<div>2</div>)}
+          {carouselItem(<div>3</div>)}
+        </Carousel>
       </Modal>
     </Stylesheets>
   );
