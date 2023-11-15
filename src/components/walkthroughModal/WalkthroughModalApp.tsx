@@ -15,35 +15,48 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Modal } from "react-bootstrap";
+import { Carousel, Modal } from "react-bootstrap";
 import React from "react";
 import { expectContext } from "@/utils/expectContext";
-import { showModal } from "@/bricks/transformers/ephemeralForm/modalUtils";
-import { getThisFrame } from "webext-messenger";
 import bootstrap from "bootstrap/dist/css/bootstrap.min.css?loadAsUrl";
 import { Stylesheets } from "@/components/Stylesheets";
+import ReactDOM from "react-dom";
 
-export const WalkthroughModalApp: React.FunctionComponent = () => (
-  <Stylesheets href={[bootstrap]}>
-    <Modal show={true}>
-      <Modal.Header closeButton />
-      <Modal.Body>hello world!</Modal.Body>
-    </Modal>
-  </Stylesheets>
-);
+const PAGE_EDITOR_WALKTHROUGH_MODAL_CONTAINER_ID =
+  "page-editor-walkthrough-modal";
+
+export const WalkthroughModalApp: React.FunctionComponent = () => {
+  return (
+    <Stylesheets href={[bootstrap]}>
+      <Modal
+        show={true}
+        container={document
+          .querySelector("#page-editor-walkthrough-modal")
+          .shadowRoot.querySelector("#WUMBO")}
+      >
+        <Carousel>
+          <Carousel.Item>step 1</Carousel.Item>
+          <Carousel.Item>step 2</Carousel.Item>
+          <Carousel.Item>step 3</Carousel.Item>
+        </Carousel>
+      </Modal>
+    </Stylesheets>
+  );
+};
 
 const initWalkthroughModalApp = async () => {
   expectContext("contentScript");
 
-  const target = await getThisFrame();
+  const container = document.createElement("div");
+  container.id = PAGE_EDITOR_WALKTHROUGH_MODAL_CONTAINER_ID;
+  document.body.prepend(container);
 
-  const frameSource = new URL(browser.runtime.getURL("walkthroughModal.html"));
-  frameSource.searchParams.set("nonce", "page-editor-walkthrough");
-  frameSource.searchParams.set("opener", JSON.stringify(target));
-  frameSource.searchParams.set("mode", "modal");
-  const controller = new AbortController();
+  const shadow = container.attachShadow({ mode: "open" });
+  const innerContainer = document.createElement("div");
+  innerContainer.id = "WUMBO";
+  shadow.append(innerContainer);
 
-  showModal({ url: frameSource, controller });
+  ReactDOM.render(<WalkthroughModalApp />, innerContainer);
 };
 
 export const showWalkthroughModal = async () => {
