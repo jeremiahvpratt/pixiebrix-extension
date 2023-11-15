@@ -16,7 +16,7 @@
  */
 
 import { Carousel, Modal } from "react-bootstrap";
-import React from "react";
+import React, { useRef } from "react";
 import { expectContext } from "@/utils/expectContext";
 import bootstrap from "bootstrap/dist/css/bootstrap.min.css?loadAsUrl";
 import { Stylesheets } from "@/components/Stylesheets";
@@ -26,6 +26,7 @@ const PAGE_EDITOR_WALKTHROUGH_MODAL_CONTAINER_ID =
   "page-editor-walkthrough-modal";
 
 export const WalkthroughModalApp: React.FunctionComponent = () => {
+  const ref = useRef(null);
   return (
     <Stylesheets href={[bootstrap]}>
       <Modal
@@ -34,11 +35,29 @@ export const WalkthroughModalApp: React.FunctionComponent = () => {
           .querySelector("#page-editor-walkthrough-modal")
           .shadowRoot.querySelector("#WUMBO")}
       >
-        <Carousel>
-          <Carousel.Item>step 1</Carousel.Item>
-          <Carousel.Item>step 2</Carousel.Item>
-          <Carousel.Item>step 3</Carousel.Item>
-        </Carousel>
+        <Modal.Body>
+          <Carousel slide={false} controls={false} ref={ref}>
+            <Carousel.Item>step 1</Carousel.Item>
+            <Carousel.Item>step 2</Carousel.Item>
+            <Carousel.Item>step 3</Carousel.Item>
+          </Carousel>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            onClick={() => {
+              ref.current.prev();
+            }}
+          >
+            Prev
+          </button>
+          <button
+            onClick={() => {
+              ref.current.next();
+            }}
+          >
+            Next
+          </button>
+        </Modal.Footer>
       </Modal>
     </Stylesheets>
   );
